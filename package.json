@@ -1,0 +1,24 @@
+{
+  "name": "battleship-jest",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.9"
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}
