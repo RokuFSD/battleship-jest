@@ -23,9 +23,11 @@
     "vite": "^2.9.9"
   },
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "trailingComma": "all"
   },
   "dependencies": {
+    "jest-cli": "^28.1.2",
     "ts-node": "^10.8.2"
   }
 }
