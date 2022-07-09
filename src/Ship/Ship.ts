@@ -1,11 +1,13 @@
 export type ShipType = {
   length: number;
   hit(position: number): string | undefined;
-  isSunk(): boolean
+  isSunk(): boolean;
+  id: number;
 };
 
 const Ship = (length: number): ShipType => {
   let health: number[] = new Array(length).fill(0);
+  let id: number = Date.now();
 
   function hit(position: number) {
     if (position > length) return;
@@ -14,8 +16,11 @@ const Ship = (length: number): ShipType => {
     return 'hit';
   }
 
-  function isSunk():boolean {
-    let totalHits: number = health.reduce((accum, current) => accum + current, 0);
+  function isSunk(): boolean {
+    let totalHits: number = health.reduce(
+      (accum, current) => accum + current,
+      0,
+    );
     return totalHits === length;
   }
 
@@ -23,6 +28,7 @@ const Ship = (length: number): ShipType => {
     length,
     hit,
     isSunk,
+    id,
   };
 };
 
