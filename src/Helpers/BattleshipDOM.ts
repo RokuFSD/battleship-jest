@@ -1,15 +1,17 @@
 import { GameboardType } from '../Gameboard/Gameboard';
 import components from '../styles/components.module.css';
 import Game from '../Game/Game';
+import { ShipType } from 'Ship/Ship';
 
 const BattleshipDOM = (() => {
   let root: HTMLElement | undefined = undefined;
 
-  function setItemClass(element: HTMLElement, status: string) {
-    if (status === 'empty') return;
-    if (status === 'missed')
-      return element.classList.add(`${components.gridItemMissed}`);
-    return element.classList.add(`${components.gridItemBoat}`);
+  function setItemClass(element: HTMLElement, status: string | ShipType) {
+    if (typeof status !== 'string') {
+      element.classList.add(`${components.gridItemBoat}`);
+    } else {
+      element.classList.add(`${components[status]}`);
+    }
   }
 
   function makeGrid(gameboard: GameboardType) {
@@ -31,14 +33,16 @@ const BattleshipDOM = (() => {
   }
 
   function handleClick(evt: Event) {
+    evt.stopPropagation();
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
     let x = target.id.slice(0, 1);
     let y = target.id.slice(1);
-    Game.handleClick(x, y);
+    let status = Game.handleTurn(x, y);
+    setItemClass(target, status);
   }
 
-  function setup() {
+  function setupEvent() {
     root!.addEventListener('click', handleClick);
   }
 
@@ -48,7 +52,7 @@ const BattleshipDOM = (() => {
 
   return {
     makeGrid,
-    setup,
+    setupEvent,
     setRoot,
   };
 })();

@@ -7,3 +7,4 @@ app.classList.add(`${layout.app}`);
 
 Game.start(app);
 Game.placeShips();
+Game.makeUI();

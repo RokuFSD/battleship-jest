@@ -20,10 +20,10 @@ const Ships = {
 };
 
 const Gameboard = (): GameboardType => {
+  let ships: ShipType[] = [];
   let grid = Array(10)
     .fill(null)
     .map(() => Array(10).fill('empty'));
-  let ships: ShipType[] = [];
 
   function validCoordinates(x: number, y: number, shipLength: number): boolean {
     if (x > 9 || y > 9) return false;
@@ -49,10 +49,10 @@ const Gameboard = (): GameboardType => {
       grid[xCoord][yCoord] = 'missed';
       return 'missed';
     }
-
+    if (grid[xCoord][yCoord] === 'missed') return 'missed';
     let { ship, place } = grid[xCoord][yCoord];
     ship.hit(place);
-    return 'A ship was attacked';
+    return 'hit';
   }
 
   function allSunk(): boolean {

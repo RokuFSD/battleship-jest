@@ -9,10 +9,14 @@
   border: 1px solid #000;
 }
 
-.gridItemMissed {
+.missed {
   background: coral;
 }
 
 .gridItemBoat {
   background: #222;
+}
+
+.hit {
+  background: springgreen;
 }
