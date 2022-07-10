@@ -1,7 +1,7 @@
 import Ship, { ShipType } from '../Ship/Ship';
 
 export type GameboardType = {
-  grid: number[][];
+  grid: string[][];
   placeShip(
     xCoord: number,
     yCoord: number,
@@ -11,12 +11,18 @@ export type GameboardType = {
   allSunk(): boolean;
 };
 
-enum Ships {
-  'DESTRUCTOR' = 5,
-}
+const Ships = {
+  carrier: 5,
+  battleship: 4,
+  destroyer: 3,
+  submarine: 3,
+  patrolboat: 2,
+};
 
 const Gameboard = (): GameboardType => {
-  let grid = new Array(10).fill(new Array(10).fill('empty'));
+  let grid = Array(10)
+    .fill(null)
+    .map(() => Array(10).fill('empty'));
   let ships: ShipType[] = [];
 
   function validCoordinates(x: number, y: number, shipLength: number): boolean {

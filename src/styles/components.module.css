@@ -1,0 +1,18 @@
+.gridContainer {
+  width: 20rem;
+  height: 20rem;
+  display: grid;
+  grid-template-columns: repeat(10, 2rem);
+}
+
+.gridItem {
+  border: 1px solid #000;
+}
+
+.gridItemMissed {
+  background: coral;
+}
+
+.gridItemBoat {
+  background: #222;
+}

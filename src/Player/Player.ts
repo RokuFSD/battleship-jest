@@ -1,6 +1,14 @@
-import { GameboardType } from 'Gameboard/Gameboard';
+import { GameboardType } from '../Gameboard/Gameboard';
 
 type PlayerStatus = 'playing' | 'winner';
+
+export type PlayerType = {
+  gameboard: GameboardType;
+  setName(value: string): void;
+  getName(): string;
+  getStatus(): PlayerStatus;
+  changeStatus(value: PlayerStatus): void;
+};
 
 const Player = (Gameboard: GameboardType) => {
   let gameboard: GameboardType = Gameboard;

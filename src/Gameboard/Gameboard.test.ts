@@ -9,11 +9,11 @@ test('gameboard factory', () => {
 });
 
 test('place ship', () => {
-  expect(newGameboard.placeShip(4, 3, 'DESTRUCTOR')).toBe('placed');
+  expect(newGameboard.placeShip(4, 3, 'destroyer')).toBe('placed');
 });
 
 test('valid place', () => {
-  expect(newGameboard.placeShip(12, 30, 'DESTRUCTOR')).toBe(undefined);
+  expect(newGameboard.placeShip(12, 30, 'destroyer')).toBe(undefined);
 });
 
 test('attack', () => {
