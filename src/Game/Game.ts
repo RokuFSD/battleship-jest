@@ -1,22 +1,26 @@
+import GameMediator from '../Helpers/Mediator';
 import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
-import BattleshipDOM from '../Helpers/BattleshipDOM';
 
 const Game = (() => {
+  let root = document.querySelector('#app');
+  let mediator: GameMediator = {} as GameMediator;
   let gameBoardOne = Gameboard();
   let gameBoardTwo = Gameboard();
   let playerOne: PlayerType = Player(gameBoardOne);
   let playerTwo: PlayerType = Player(gameBoardTwo);
   let currentPlayer = 'player';
 
-  function makeUI() {
-    BattleshipDOM.makeGrid(playerOne.gameboard);
-    BattleshipDOM.makeGrid(playerTwo.gameboard);
+  function setMediator(newMediator: GameMediator) {
+    mediator = newMediator;
   }
 
-  function start(startElm: HTMLElement) {
-    BattleshipDOM.setRoot(startElm);
-    BattleshipDOM.setupEvent();
+  function makeUI() {
+    mediator.notify(Game, 'makeui');
+  }
+
+  function start() {
+    mediator.notify(Game, 'start');
   }
 
   function checkWinner() {
@@ -26,21 +30,23 @@ const Game = (() => {
   function handleTurn(x: string, y: string) {
     let moveResult: string = '';
     if (currentPlayer === 'player') {
-      moveResult = playerTwo.gameboard.receiveAttack(Number(x), Number(y));
       currentPlayer = 'cpu';
+      moveResult = playerTwo.gameboard.receiveAttack(Number(x), Number(y));
       playerTwo.makeAttack();
     } else {
-      moveResult = playerOne.gameboard.receiveAttack(Number(x), Number(y));
       currentPlayer = 'player';
+      moveResult = playerOne.gameboard.receiveAttack(Number(x), Number(y));
     }
     if (checkWinner()) {
       console.log('winner');
     }
-    return moveResult;
+    mediator.notify(Game, 'turnPlayed', moveResult);
   }
 
   function placeShips() {
-    playerOne.gameboard.placeShip(1, 1, 'destroyer');
+    mediator.notify(Game, 'placeShips');
+
+    /*TODO*/
     playerTwo.gameboard.placeShip(2, 2, 'carrier');
     playerTwo.gameboard.placeShip(1, 1, 'destroyer');
   }
@@ -52,6 +58,8 @@ const Game = (() => {
     handleTurn,
     placeShips,
     makeUI,
+    root,
+    setMediator,
   };
 })();
 
