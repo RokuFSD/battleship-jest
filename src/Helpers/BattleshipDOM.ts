@@ -1,10 +1,15 @@
+import GameMediator from '../Helpers/Mediator';
 import { GameboardType } from '../Gameboard/Gameboard';
 import components from '../styles/components.module.css';
-import Game from '../Game/Game';
+import layout from '../styles/layout.module.css';
 import { ShipType } from 'Ship/Ship';
 
 const BattleshipDOM = (() => {
+  let mediator: GameMediator = {} as GameMediator;
+  let currentStatus: string = '';
   let root: HTMLElement | undefined = undefined;
+  let gridPlayerOne: HTMLElement = document.createElement('div');
+  let gridPlayerTwo: HTMLElement = document.createElement('div');
 
   function setItemClass(element: HTMLElement, status: string | ShipType) {
     if (typeof status !== 'string') {
@@ -14,11 +19,9 @@ const BattleshipDOM = (() => {
     }
   }
 
-  function makeGrid(gameboard: GameboardType) {
+  function makeGrid(gameboard: GameboardType): HTMLElement {
     let gridContainer = document.createElement('div');
     let gridContainerFragment = new DocumentFragment();
-    gridContainer.classList.add(`${components.gridContainer}`);
-
     for (let i = 0; i < gameboard.grid.length; i++) {
       for (let j = 0; j < gameboard.grid[i].length; j++) {
         let item = document.createElement('div');
@@ -29,17 +32,28 @@ const BattleshipDOM = (() => {
       }
     }
     gridContainer.appendChild(gridContainerFragment);
-    root?.appendChild(gridContainer);
+    return gridContainer;
+  }
+
+  function setGrid(gameboard: GameboardType, playerType: string) {
+    let grid = makeGrid(gameboard);
+    if (playerType === 'player') {
+      grid.classList.add(`${components.gridContainerPlayer}`);
+      gridPlayerOne = grid;
+    } else {
+      grid.classList.add(`${components.gridContainer}`);
+      gridPlayerTwo = grid;
+    }
+    root?.appendChild(grid);
   }
 
   function handleClick(evt: Event) {
-    evt.stopPropagation();
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
     let x = target.id.slice(0, 1);
     let y = target.id.slice(1);
-    let status = Game.handleTurn(x, y);
-    setItemClass(target, status);
+    mediator.notify(BattleshipDOM, 'handleturn', { x, y });
+    setItemClass(target, currentStatus);
   }
 
   function setupEvent() {
@@ -50,10 +64,35 @@ const BattleshipDOM = (() => {
     root = rootElement;
   }
 
+  function setStatus(status: string) {
+    currentStatus = status;
+  }
+
+  function setMediator(newMediator: GameMediator) {
+    mediator = newMediator;
+  }
+
+  /*TODO CREATE ELEMENT HELPER*/
+  function playerDrag() {
+    let outterDiv = document.createElement('div');
+    let dragDiv = document.createElement('div');
+    let btn = document.createElement('button');
+    outterDiv.setAttribute('class', `${layout.outter}`);
+    dragDiv.setAttribute('class', `${layout.dragDiv}`);
+    btn.setAttribute('class', `${components.btn}`);
+    btn.textContent = 'Rotate';
+    dragDiv.innerHTML = `<h2>Place your ships</h2>${btn.outerHTML}${gridPlayerOne.outerHTML}`;
+    outterDiv.appendChild(dragDiv);
+    root?.appendChild(outterDiv);
+  }
+
   return {
-    makeGrid,
+    setGrid,
     setupEvent,
     setRoot,
+    playerDrag,
+    setStatus,
+    setMediator,
   };
 })();
 

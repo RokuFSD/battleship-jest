@@ -3,8 +3,8 @@ import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
 
 const Game = (() => {
-  let root = document.querySelector('#app');
   let mediator: GameMediator = {} as GameMediator;
+  let root = document.querySelector('#app');
   let gameBoardOne = Gameboard();
   let gameBoardTwo = Gameboard();
   let playerOne: PlayerType = Player(gameBoardOne);
@@ -46,7 +46,7 @@ const Game = (() => {
   function placeShips() {
     mediator.notify(Game, 'placeShips');
 
-    /*TODO*/
+    /*TODO PLACE AUTO BOT*/
     playerTwo.gameboard.placeShip(2, 2, 'carrier');
     playerTwo.gameboard.placeShip(1, 1, 'destroyer');
   }
@@ -54,11 +54,11 @@ const Game = (() => {
   return {
     playerOne,
     playerTwo,
+    root,
     start,
     handleTurn,
     placeShips,
     makeUI,
-    root,
     setMediator,
   };
 })();
