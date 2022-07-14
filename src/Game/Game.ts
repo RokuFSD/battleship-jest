@@ -2,13 +2,21 @@ import GameMediator from '../Helpers/Mediator';
 import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
 
+
+const Ships = {
+  carrier: 5,
+  battleship: 4,
+  destroyer: 3,
+  submarine: 3,
+  patrolboat: 2,
+};
+
+
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
   let root = document.querySelector('#app');
-  let gameBoardOne = Gameboard();
-  let gameBoardTwo = Gameboard();
-  let playerOne: PlayerType = Player(gameBoardOne);
-  let playerTwo: PlayerType = Player(gameBoardTwo);
+  let playerOne: PlayerType = Player(Gameboard());
+  let playerTwo: PlayerType = Player(Gameboard());
   let currentPlayer = 'player';
 
   function setMediator(newMediator: GameMediator) {
@@ -51,6 +59,10 @@ const Game = (() => {
     playerTwo.gameboard.placeShip(1, 1, 'destroyer');
   }
 
+  function addShip(x: number, y:number, shipType: keyof typeof Ships) {
+    playerOne.gameboard.placeShip(x, y, shipType);
+  }
+
   return {
     playerOne,
     playerTwo,
@@ -60,6 +72,7 @@ const Game = (() => {
     placeShips,
     makeUI,
     setMediator,
+    addShip,
   };
 })();
 
