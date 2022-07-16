@@ -24,7 +24,7 @@
 }
 
 .hit {
-  background: springgreen;
+  background: springgreen !important;
 }
 
 .missed,
@@ -46,4 +46,8 @@
 
 :global(.hovered){
   background-color: red;
+}
+
+:global(.ship){
+  background: #222;
 }

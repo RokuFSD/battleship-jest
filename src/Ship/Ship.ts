@@ -5,6 +5,14 @@ export type ShipType = {
   id: number;
 };
 
+export const Ships = {
+  carrier: 5,
+  battleship: 4,
+  destroyer: 3,
+  submarine: 3,
+  patrolboat: 2,
+};
+
 const Ship = (length: number): ShipType => {
   let health: number[] = new Array(length).fill(0);
   let id: number = Date.now();

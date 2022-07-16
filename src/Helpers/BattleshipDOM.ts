@@ -1,17 +1,9 @@
 import GameMediator from '../Helpers/Mediator';
 import { GameboardType } from '../Gameboard/Gameboard';
-import { ShipType } from '../Ship/Ship';
+import { ShipType, Ships } from '../Ship/Ship';
 import { createElement, validCoordinates } from '../Helpers/index';
 import components from '../styles/components.module.css';
 import layout from '../styles/layout.module.css';
-
-const Ships = {
-  carrier: 5,
-  battleship: 4,
-  destroyer: 3,
-  submarine: 3,
-  patrolboat: 2,
-};
 
 const BattleshipDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -47,35 +39,37 @@ const BattleshipDOM = (() => {
     gamePhase = phase;
   }
 
-  function handleMouseOver(evt: Event) {
-    let target = evt.target as HTMLDivElement;
-    if (!target.classList.contains(`${components.gridItem}`)) return;
+  function getItemData(target: HTMLDivElement) {
     let x = +target.id.slice(0, 1);
     let y = +target.id.slice(1);
-    if (y + shipsToPlace[currentShip][1] > 10) return;
-    target.classList.add('hovered');
-    for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
-      let sibling = document.getElementById(`${x}${y + i}`);
-      sibling!.classList.add('hovered');
-    }
+    return { x, y };
   }
 
-  function handleMouseLeave(evt: Event) {
+  function handleMouse(evt: Event) {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
-    let x = +target.id.slice(0, 1);
-    let y = +target.id.slice(1);
-    target.classList.remove('hovered');
-    for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
-      let sibling = document.getElementById(`${x}${y + i}`);
-      sibling!.classList.remove('hovered');
+    let { x, y } = getItemData(target);
+    if (y + shipsToPlace[currentShip][1] > 10) return;
+    if (evt.type === 'mouseover') {
+      target.classList.add('hovered');
+      for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
+        let sibling = document.getElementById(`${x}${y + i}`);
+        sibling!.classList.add('hovered');
+      }
+    }
+    if (evt.type === 'mouseout' || evt.type === 'mouseup') {
+      target.classList.remove('hovered');
+      for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
+        let sibling = document.getElementById(`${x}${y + i}`);
+        sibling!.classList.remove('hovered');
+      }
     }
   }
 
   function removeEvent() {
-    root!.removeEventListener('mouseover', handleMouseOver);
-    root!.removeEventListener('mouseout', handleMouseLeave);
-    root!.removeEventListener('mouseup', handleMouseLeave);
+    root!.removeEventListener('mouseover', handleMouse);
+    root!.removeEventListener('mouseout', handleMouse);
+    root!.removeEventListener('mouseup', handleMouse);
   }
 
   function finalStep() {
@@ -90,10 +84,14 @@ const BattleshipDOM = (() => {
   function handleClick(evt: Event) {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
-    let x = +target.id.slice(0, 1);
-    let y = +target.id.slice(1);
+    let { x, y } = getItemData(target);
     if (gamePhase === 'gridConfig') {
       if (!validCoordinates(x, y, shipsToPlace[currentShip][1])) return;
+      target.classList.add('ship');
+      for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
+        let sibling = document.getElementById(`${x}${y + i}`);
+        sibling!.classList.add('ship');
+      }
       mediator.notify(BattleshipDOM, 'placeship', { x, y, shipType: shipsToPlace[currentShip][0] });
       currentShip++;
       if (currentShip === 5) {
@@ -107,9 +105,9 @@ const BattleshipDOM = (() => {
   }
 
   function setupEvent() {
-    root!.addEventListener('mouseover', handleMouseOver);
-    root!.addEventListener('mouseup', handleMouseLeave);
-    root!.addEventListener('mouseout', handleMouseLeave);
+    root!.addEventListener('mouseover', handleMouse);
+    root!.addEventListener('mouseup', handleMouse);
+    root!.addEventListener('mouseout', handleMouse);
     root!.addEventListener('click', handleClick);
   }
 
@@ -122,7 +120,6 @@ const BattleshipDOM = (() => {
           class: `${components.gridItem}`,
           id: `${i}${j}`,
         });
-        setItemClass(item, gameboard.grid[i][j]);
         gridContainerFragment.appendChild(item);
       }
     }
@@ -140,7 +137,7 @@ const BattleshipDOM = (() => {
     }
   }
 
-  function playerDrag() {
+  function placeShipsModal() {
     let outterDiv = createElement('div', { class: `${layout.outter}` }, [
       createElement(
         'div',
@@ -161,7 +158,7 @@ const BattleshipDOM = (() => {
     setGrid,
     setupEvent,
     setRoot,
-    playerDrag,
+    placeShipsModal,
     setTurnResult,
     setMediator,
     setGamePhase,

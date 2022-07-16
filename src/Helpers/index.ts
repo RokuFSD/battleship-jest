@@ -17,7 +17,7 @@ function createElement(tagName: string, props: PropTypes, innerContent?: HTMLEle
 }
 
 function validCoordinates(x: number, y: number, shipLength: number): boolean {
-  return x < 10 && y + shipLength < 10;
+  return x < 10 && y + shipLength <= 10;
 }
 
 export { createElement, validCoordinates };

@@ -29,7 +29,7 @@ class GameMediator implements Mediator {
         this.secondComponent.setGamePhase('gridConfig');
       }
       if (event === 'placeShips') {
-        this.secondComponent.playerDrag();
+        this.secondComponent.placeShipsModal();
       }
       if (event === 'turnPlayed') {
         this.secondComponent.setTurnResult(data as string);
