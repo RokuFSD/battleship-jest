@@ -17,6 +17,12 @@ function createElement(tagName: string, props: PropTypes, innerContent?: HTMLEle
 }
 
 function validCoordinates(x: number, y: number, shipLength: number): boolean {
+  for (let i = 1; i < shipLength && y + i <= 9; i++) {
+    let sibling = document.getElementById(`${x}${y + i}`);
+    if (sibling!.classList.contains('ship')) {
+      return false;
+    }
+  }
   return x < 10 && y + shipLength <= 10;
 }
 

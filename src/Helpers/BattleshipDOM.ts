@@ -49,24 +49,24 @@ const BattleshipDOM = (() => {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
     let { x, y } = getItemData(target);
-    if (y + shipsToPlace[currentShip][1] > 10) return;
+    if (!validCoordinates(x, y, shipsToPlace[currentShip][1])) return;
     if (evt.type === 'mouseover') {
       target.classList.add('hovered');
-      for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
+      for (let i = 1; i < shipsToPlace[currentShip][1]; i++) {
         let sibling = document.getElementById(`${x}${y + i}`);
         sibling!.classList.add('hovered');
       }
     }
     if (evt.type === 'mouseout' || evt.type === 'mouseup') {
       target.classList.remove('hovered');
-      for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
+      for (let i = 1; i < shipsToPlace[currentShip][1]; i++) {
         let sibling = document.getElementById(`${x}${y + i}`);
         sibling!.classList.remove('hovered');
       }
     }
   }
 
-  function removeEvent() {
+  function removeMouseEvents() {
     root!.removeEventListener('mouseover', handleMouse);
     root!.removeEventListener('mouseout', handleMouse);
     root!.removeEventListener('mouseup', handleMouse);
@@ -87,15 +87,15 @@ const BattleshipDOM = (() => {
     let { x, y } = getItemData(target);
     if (gamePhase === 'gridConfig') {
       if (!validCoordinates(x, y, shipsToPlace[currentShip][1])) return;
+      mediator.notify(BattleshipDOM, 'placeship', { x, y, shipType: shipsToPlace[currentShip][0] });
       target.classList.add('ship');
-      for (let i = 1; i < shipsToPlace[currentShip][1] && y + i <= 9; i++) {
+      for (let i = 1; i < shipsToPlace[currentShip][1]; i++) {
         let sibling = document.getElementById(`${x}${y + i}`);
         sibling!.classList.add('ship');
       }
-      mediator.notify(BattleshipDOM, 'placeship', { x, y, shipType: shipsToPlace[currentShip][0] });
       currentShip++;
       if (currentShip === 5) {
-        removeEvent();
+        removeMouseEvents();
         finalStep();
       }
     } else {

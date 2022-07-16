@@ -28,26 +28,21 @@
 }
 
 .missed,
-.hit {
+.hit{
   pointer-events: none;
 }
 
-.ship{
-  display: flex;
-  position: absolute;
-  top: 2rem;
-}
-
-.shipbox{
+.shipbox {
   background-color: blue;
   width: 31px;
   height: 31px;
 }
 
-:global(.hovered){
+:global(.hovered) {
   background-color: red;
 }
 
-:global(.ship){
+:global(.ship) {
   background: #222;
+  pointer-events: none;
 }
