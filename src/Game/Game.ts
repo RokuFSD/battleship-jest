@@ -2,7 +2,6 @@ import GameMediator from '../Helpers/Mediator';
 import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
 
-
 const Ships = {
   carrier: 5,
   battleship: 4,
@@ -10,7 +9,6 @@ const Ships = {
   submarine: 3,
   patrolboat: 2,
 };
-
 
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -53,13 +51,12 @@ const Game = (() => {
 
   function placeShips() {
     mediator.notify(Game, 'placeShips');
-
     /*TODO PLACE AUTO BOT*/
     playerTwo.gameboard.placeShip(2, 2, 'carrier');
     playerTwo.gameboard.placeShip(1, 1, 'destroyer');
   }
 
-  function addShip(x: number, y:number, shipType: keyof typeof Ships) {
+  function addShip(x: number, y: number, shipType: keyof typeof Ships) {
     playerOne.gameboard.placeShip(x, y, shipType);
   }
 
