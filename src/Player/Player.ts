@@ -53,10 +53,10 @@ const Player = (Gameboard: GameboardType) => {
 
   return {
     gameboard,
+    changeStatus,
+    getStatus,
     setName,
     getName,
-    getStatus,
-    changeStatus,
     makeAttack,
   };
 };

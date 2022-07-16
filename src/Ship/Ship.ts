@@ -15,18 +15,15 @@ const Ship = (length: number): ShipType => {
   }
 
   function isSunk(): boolean {
-    let totalHits: number = health.reduce(
-      (accum, current) => accum + current,
-      0,
-    );
+    let totalHits: number = health.reduce((accum, current) => accum + current, 0);
     return totalHits === length;
   }
 
   return {
+    id,
     length,
     hit,
     isSunk,
-    id,
   };
 };
 

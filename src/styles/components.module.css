@@ -1,8 +1,14 @@
-.gridContainer {
+.gridContainer,
+.gridContainerPlayer {
   width: 20rem;
   height: 20rem;
   display: grid;
   grid-template-columns: repeat(10, 2rem);
+  z-index: 1000;
+}
+
+.gridContainerPlayer {
+  pointer-events: none;
 }
 
 .gridItem {
@@ -19,4 +25,25 @@
 
 .hit {
   background: springgreen;
+}
+
+.missed,
+.hit {
+  pointer-events: none;
+}
+
+.ship{
+  display: flex;
+  position: absolute;
+  top: 2rem;
+}
+
+.shipbox{
+  background-color: blue;
+  width: 31px;
+  height: 31px;
+}
+
+:global(.hovered){
+  background-color: red;
 }
