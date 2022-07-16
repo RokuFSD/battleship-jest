@@ -1,14 +1,7 @@
 import GameMediator from '../Helpers/Mediator';
 import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
-
-const Ships = {
-  carrier: 5,
-  battleship: 4,
-  destroyer: 3,
-  submarine: 3,
-  patrolboat: 2,
-};
+import { Ships } from '../Ship/Ship';
 
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
