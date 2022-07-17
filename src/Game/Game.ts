@@ -5,7 +5,6 @@ import { Ships } from '../Ship/Ship';
 
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
-  let root = document.querySelector('#app');
   let playerOne: PlayerType = Player(Gameboard());
   let playerTwo: PlayerType = Player(Gameboard());
   let currentPlayer = 'player';
@@ -59,7 +58,6 @@ const Game = (() => {
   return {
     playerOne,
     playerTwo,
-    root,
     start,
     handleTurn,
     placeShips,

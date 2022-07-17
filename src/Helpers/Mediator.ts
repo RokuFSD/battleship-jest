@@ -24,7 +24,6 @@ class GameMediator implements Mediator {
         this.secondComponent.setGrid(sender.playerTwo.gameboard, 'cpu');
       }
       if (event === 'start') {
-        this.secondComponent.setRoot(Game.root as HTMLDivElement);
         this.secondComponent.setupEvent();
         this.secondComponent.setGamePhase('gridConfig');
       }
