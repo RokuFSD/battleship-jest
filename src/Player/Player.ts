@@ -7,7 +7,6 @@ export type PlayerType = {
   setName(value: string): void;
   getName(): string;
   getStatus(): PlayerStatus;
-  changeStatus(value: PlayerStatus): void;
   makeAttack(): void;
 };
 
@@ -27,10 +26,6 @@ const Player = (Gameboard: GameboardType) => {
 
   function getStatus(): PlayerStatus {
     return status;
-  }
-
-  function changeStatus(value: PlayerStatus): void {
-    status = value;
   }
 
   function randomMove(): { x: number; y: number } {
@@ -53,7 +48,6 @@ const Player = (Gameboard: GameboardType) => {
 
   return {
     gameboard,
-    changeStatus,
     getStatus,
     setName,
     getName,

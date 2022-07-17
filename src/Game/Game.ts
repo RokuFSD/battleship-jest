@@ -51,6 +51,9 @@ const Game = (() => {
 
   function addShip(x: number, y: number, shipType: keyof typeof Ships) {
     playerOne.gameboard.placeShip(x, y, shipType);
+    if (playerOne.gameboard.allShipsPlaced()) {
+      mediator.notify(Game, 'startPlaying');
+    }
   }
 
   return {

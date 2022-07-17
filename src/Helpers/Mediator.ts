@@ -34,6 +34,10 @@ class GameMediator implements Mediator {
       if (event === 'turnPlayed') {
         this.secondComponent.setTurnResult(data as string);
       }
+      if (event === 'startPlaying') {
+        this.secondComponent.setGamePhase('playing');
+        this.secondComponent.closeSetup();
+      }
     }
     if (sender === this.secondComponent) {
       if (event === 'handleturn') {

@@ -6,6 +6,7 @@ export type GameboardType = {
   placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships): string | undefined;
   receiveAttack(xCoord: number, yCoord: number): string;
   allSunk(): boolean;
+  allShipsPlaced(): boolean;
 };
 
 const Ships = {
@@ -32,6 +33,10 @@ const Gameboard = (): GameboardType => {
     return 'placed';
   }
 
+  function allShipsPlaced() {
+    return ships.length === 5;
+  }
+
   function receiveAttack(xCoord: number, yCoord: number): string {
     if (grid[xCoord][yCoord] === 'empty') {
       grid[xCoord][yCoord] = 'missed';
@@ -54,6 +59,7 @@ const Gameboard = (): GameboardType => {
     placeShip,
     receiveAttack,
     allSunk,
+    allShipsPlaced,
   };
 };
 

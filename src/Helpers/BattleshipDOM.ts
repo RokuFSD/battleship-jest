@@ -15,14 +15,6 @@ const BattleshipDOM = (() => {
   let currentShip = 0;
   let gamePhase: string = 'idle';
 
-  function setItemClass(element: HTMLElement, status: string | ShipType) {
-    if (typeof status !== 'string') {
-      element.classList.add(`${components.gridItemBoat}`);
-    } else {
-      element.classList.add(`${components[status]}`);
-    }
-  }
-
   function setRoot(rootElement: HTMLElement) {
     root = rootElement;
   }
@@ -39,30 +31,47 @@ const BattleshipDOM = (() => {
     gamePhase = phase;
   }
 
+  function setItemClass(element: HTMLElement, status: string | ShipType) {
+    if (typeof status !== 'string') {
+      element.classList.add(`${components.gridItemBoat}`);
+    } else {
+      element.classList.add(`${components[status]}`);
+    }
+  }
+
   function getItemData(target: HTMLDivElement) {
     let x = +target.id.slice(0, 1);
     let y = +target.id.slice(1);
     return { x, y };
   }
 
+  function addSiblingsClass(className: string, shipLength: number, starterCoordinates: { x: number; y: number }) {
+    for (let i = 1; i < shipLength; i++) {
+      let sibling = document.getElementById(`${starterCoordinates.x}${starterCoordinates.y + i}`);
+      sibling!.classList.add(className);
+    }
+  }
+
+  function removeSiblingsClass(className: string, shipLength: number, starterCoordinates: { x: number; y: number }) {
+    for (let i = 1; i < shipLength; i++) {
+      let sibling = document.getElementById(`${starterCoordinates.x}${starterCoordinates.y + i}`);
+      sibling!.classList.remove(className);
+    }
+  }
+
   function handleMouse(evt: Event) {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
+    let shipLength = shipsToPlace[currentShip][1];
     let { x, y } = getItemData(target);
-    if (!validCoordinates(x, y, shipsToPlace[currentShip][1])) return;
+    if (!validCoordinates(x, y, shipLength)) return;
     if (evt.type === 'mouseover') {
       target.classList.add('hovered');
-      for (let i = 1; i < shipsToPlace[currentShip][1]; i++) {
-        let sibling = document.getElementById(`${x}${y + i}`);
-        sibling!.classList.add('hovered');
-      }
+      addSiblingsClass('hovered', shipLength, { x, y });
     }
     if (evt.type === 'mouseout' || evt.type === 'mouseup') {
       target.classList.remove('hovered');
-      for (let i = 1; i < shipsToPlace[currentShip][1]; i++) {
-        let sibling = document.getElementById(`${x}${y + i}`);
-        sibling!.classList.remove('hovered');
-      }
+      removeSiblingsClass('hovered', shipLength, { x, y });
     }
   }
 
@@ -72,13 +81,15 @@ const BattleshipDOM = (() => {
     root!.removeEventListener('mouseup', handleMouse);
   }
 
-  function finalStep() {
+  function closeModal() {
     let modal = document.querySelector(`.${layout.outter}`);
+    root?.removeChild(modal!);
+  }
+
+  function addPlayersGrids() {
+    gridPlayerOne.classList.add(`${components.gridContainerPlayer}`);
     root?.appendChild(gridPlayerOne);
     root?.appendChild(gridPlayerTwo);
-    root?.removeChild(modal!);
-    gridPlayerOne.classList.add(`${components.gridContainerPlayer}`);
-    setGamePhase('playing');
   }
 
   function handleClick(evt: Event) {
@@ -86,18 +97,12 @@ const BattleshipDOM = (() => {
     if (!target.classList.contains(`${components.gridItem}`)) return;
     let { x, y } = getItemData(target);
     if (gamePhase === 'gridConfig') {
-      if (!validCoordinates(x, y, shipsToPlace[currentShip][1])) return;
+      let shipLength = shipsToPlace[currentShip][1];
+      if (!validCoordinates(x, y, shipLength)) return;
       mediator.notify(BattleshipDOM, 'placeship', { x, y, shipType: shipsToPlace[currentShip][0] });
       target.classList.add('ship');
-      for (let i = 1; i < shipsToPlace[currentShip][1]; i++) {
-        let sibling = document.getElementById(`${x}${y + i}`);
-        sibling!.classList.add('ship');
-      }
+      addSiblingsClass('ship', shipLength, { x, y });
       currentShip++;
-      if (currentShip === 5) {
-        removeMouseEvents();
-        finalStep();
-      }
     } else {
       mediator.notify(BattleshipDOM, 'handleturn', { x, y });
       setItemClass(target, turnResult);
@@ -154,6 +159,12 @@ const BattleshipDOM = (() => {
     root?.appendChild(outterDiv);
   }
 
+  function closeSetup() {
+    removeMouseEvents();
+    closeModal();
+    addPlayersGrids();
+  }
+
   return {
     setGrid,
     setupEvent,
@@ -162,6 +173,7 @@ const BattleshipDOM = (() => {
     setTurnResult,
     setMediator,
     setGamePhase,
+    closeSetup,
   };
 })();
 
