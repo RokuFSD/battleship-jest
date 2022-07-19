@@ -4,7 +4,7 @@ type GameConfig = {
 };
 
 const gameConfig = {
-  config: { mainAxis: 'y', theme: 'light' } as GameConfig,
+  config: { mainAxis: 'x', theme: 'light' } as GameConfig,
   setConfig: function (config: GameConfig) {
     this.config = { ...this.config, ...config };
   },

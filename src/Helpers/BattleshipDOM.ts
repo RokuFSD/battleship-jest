@@ -42,10 +42,19 @@ const BattleshipDOM = (() => {
     return { x, y };
   }
 
-  function handleSiblingClass(className: string, shipLength: number, coords: { x: number; y: number }, todo = 'add') {
+  function handleSiblingClass(
+    className: string,
+    shipLength: number,
+    coords: { x: number; y: number },
+    todo = 'add',
+  ) {
     for (let i = 1; i < shipLength; i++) {
       let sibling = document.getElementById(
-        `${gameConfig.config.mainAxis === 'y' ? `${coords.x}${coords.y + i}` : `${coords.x + i}${coords.y}`}`,
+        `${
+          gameConfig.config.mainAxis === 'x'
+            ? `${coords.x}${coords.y + i}`
+            : `${coords.x + i}${coords.y}`
+        }`,
       );
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       todo === 'add' ? sibling!.classList.add(className) : sibling!.classList.remove(className);
@@ -136,9 +145,13 @@ const BattleshipDOM = (() => {
   }
 
   function placeShipsModal() {
+    let axisElement = createElement('div', {}, `Axis: ${gameConfig.config.mainAxis}`);
     let rotateBtn = createElement('button', { class: `${components.btn}` }, 'Rotate');
     rotateBtn.addEventListener('click', () => {
-      gameConfig.setConfig(gameConfig.config.mainAxis === 'x' ? { mainAxis: 'y' } : { mainAxis: 'x' });
+      gameConfig.setConfig(
+        gameConfig.config.mainAxis === 'x' ? { mainAxis: 'y' } : { mainAxis: 'x' },
+      );
+      axisElement.textContent = `Axis: ${gameConfig.config.mainAxis}`;
     });
     let outterDiv = createElement('div', { class: `${layout.outter}` }, [
       createElement(
@@ -146,7 +159,7 @@ const BattleshipDOM = (() => {
         {
           class: `${layout.dragDiv}`,
         },
-        [createElement('h2', {}, 'Place your ships'), rotateBtn, gridPlayerOne],
+        [createElement('h2', {}, 'Place your ships'), axisElement, rotateBtn, gridPlayerOne],
       ),
     ]);
     root?.appendChild(outterDiv);

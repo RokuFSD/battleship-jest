@@ -21,7 +21,7 @@ const Gameboard = (): GameboardType => {
     if (!validCoordinates(xCoord, yCoord, ship.length)) return;
     for (let i = 0; i < ship.length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      gameConfig.config.mainAxis === 'y'
+      gameConfig.config.mainAxis === 'x'
         ? (grid[xCoord][yCoord + i] = { ship: ship, place: i })
         : (grid[xCoord + i][yCoord] = { ship: ship, place: i });
     }

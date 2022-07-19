@@ -26,7 +26,7 @@
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all",
-    "printWidth": 120
+    "printWidth": 100
   },
   "dependencies": {
     "jest-cli": "^28.1.2",
