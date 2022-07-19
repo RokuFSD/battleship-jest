@@ -1,3 +1,5 @@
+import { gameConfig } from '../config/gameConfig';
+
 type PropTypes = { [k: string]: string } | undefined;
 
 function createElement(tagName: string, props: PropTypes, innerContent?: HTMLElement[] | string): HTMLElement {
@@ -17,13 +19,15 @@ function createElement(tagName: string, props: PropTypes, innerContent?: HTMLEle
 }
 
 function validCoordinates(x: number, y: number, shipLength: number): boolean {
-  for (let i = 1; i < shipLength && y + i <= 9; i++) {
-    let sibling = document.getElementById(`${x}${y + i}`);
+  let axisToCheck = gameConfig.config.mainAxis === 'y' ? y : x;
+  for (let i = 1; i < shipLength && axisToCheck + i <= 9; i++) {
+    let sibling = document.getElementById(`${gameConfig.config.mainAxis === 'y' ? `${x}${y + i}` : `${x + i}${y}`}`);
     if (sibling!.classList.contains('ship')) {
       return false;
     }
   }
-  return x < 10 && y + shipLength <= 10;
+  return axisToCheck + shipLength <= 10;
+  // return x < 10 && y + shipLength <= 10;
 }
 
 export { createElement, validCoordinates };

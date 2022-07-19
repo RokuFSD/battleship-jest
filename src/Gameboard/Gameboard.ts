@@ -1,5 +1,6 @@
-import Ship, { ShipType } from '../Ship/Ship';
+import Ship, { ShipType, Ships } from '../Ship/Ship';
 import { validCoordinates } from '../Helpers';
+import { gameConfig } from '../config/gameConfig';
 
 export type GameboardType = {
   grid: string[][];
@@ -7,14 +8,6 @@ export type GameboardType = {
   receiveAttack(xCoord: number, yCoord: number): string;
   allSunk(): boolean;
   allShipsPlaced(): boolean;
-};
-
-const Ships = {
-  carrier: 5,
-  battleship: 4,
-  destroyer: 3,
-  submarine: 3,
-  patrolboat: 2,
 };
 
 const Gameboard = (): GameboardType => {
@@ -27,7 +20,10 @@ const Gameboard = (): GameboardType => {
     let ship = Ship(Ships[shipType]);
     if (!validCoordinates(xCoord, yCoord, ship.length)) return;
     for (let i = 0; i < ship.length; i++) {
-      grid[xCoord][yCoord + i] = { ship: ship, place: i };
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      gameConfig.config.mainAxis === 'y'
+        ? (grid[xCoord][yCoord + i] = { ship: ship, place: i })
+        : (grid[xCoord + i][yCoord] = { ship: ship, place: i });
     }
     ships.push(ship);
     return 'placed';

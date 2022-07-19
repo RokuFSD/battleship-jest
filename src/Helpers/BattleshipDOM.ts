@@ -2,6 +2,7 @@ import GameMediator from '../Helpers/Mediator';
 import { GameboardType } from '../Gameboard/Gameboard';
 import { ShipType, Ships } from '../Ship/Ship';
 import { createElement, validCoordinates } from '../Helpers/index';
+import { gameConfig } from '../config/gameConfig';
 import components from '../styles/components.module.css';
 import layout from '../styles/layout.module.css';
 
@@ -43,12 +44,11 @@ const BattleshipDOM = (() => {
 
   function handleSiblingClass(className: string, shipLength: number, coords: { x: number; y: number }, todo = 'add') {
     for (let i = 1; i < shipLength; i++) {
-      let sibling = document.getElementById(`${coords.x}${coords.y + i}`);
-      if (todo === 'add') {
-        sibling!.classList.add(className);
-      } else {
-        sibling!.classList.remove(className);
-      }
+      let sibling = document.getElementById(
+        `${gameConfig.config.mainAxis === 'y' ? `${coords.x}${coords.y + i}` : `${coords.x + i}${coords.y}`}`,
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      todo === 'add' ? sibling!.classList.add(className) : sibling!.classList.remove(className);
     }
   }
 
@@ -136,17 +136,17 @@ const BattleshipDOM = (() => {
   }
 
   function placeShipsModal() {
+    let rotateBtn = createElement('button', { class: `${components.btn}` }, 'Rotate');
+    rotateBtn.addEventListener('click', () => {
+      gameConfig.setConfig(gameConfig.config.mainAxis === 'x' ? { mainAxis: 'y' } : { mainAxis: 'x' });
+    });
     let outterDiv = createElement('div', { class: `${layout.outter}` }, [
       createElement(
         'div',
         {
           class: `${layout.dragDiv}`,
         },
-        [
-          createElement('h2', {}, 'Place your ships'),
-          createElement('button', { class: `${components.btn}` }, 'Rotate'),
-          gridPlayerOne,
-        ],
+        [createElement('h2', {}, 'Place your ships'), rotateBtn, gridPlayerOne],
       ),
     ]);
     root?.appendChild(outterDiv);
