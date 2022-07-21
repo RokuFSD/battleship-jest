@@ -1,13 +1,18 @@
 import Ship, { ShipType, Ships } from '../Ship/Ship';
-import { validCoordinates } from '../Helpers';
 import { gameConfig } from '../config/gameConfig';
 
 export type GameboardType = {
   grid: string[][];
-  placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships, gridRoot: 'c' | 'p'): string | undefined;
+  placeShip(
+    xCoord: number,
+    yCoord: number,
+    shipType: keyof typeof Ships,
+    gridRoot: 'c' | 'p',
+  ): string | undefined;
   receiveAttack(xCoord: number, yCoord: number): string;
   allSunk(): boolean;
   allShipsPlaced(): boolean;
+  validCoordinates(x: number, y: number, shipLength: number): boolean;
 };
 
 const Gameboard = (): GameboardType => {
@@ -16,9 +21,31 @@ const Gameboard = (): GameboardType => {
     .fill(null)
     .map(() => Array(10).fill('empty'));
 
-  function placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships, gridRoot = 'p') {
+  function isCellEmpty(xCoord: number, yCoord: number): boolean {
+    return grid[xCoord][yCoord] === 'empty';
+  }
+
+
+  /*TODO: Refactor*/
+  function validCoordinates(x: number, y: number, shipLength: number): boolean {
+    let axisToCheck = gameConfig.config.mainAxis === 'y' ? x : y;
+    for (let i = 0; i < shipLength && axisToCheck + i <= 9; i++) {
+      if (gameConfig.config.mainAxis === 'x') {
+        if (!isCellEmpty(x, y + i)) {
+          return false;
+        }
+      } else {
+        if (!isCellEmpty(x + i, y)) {
+          return false;
+        }
+      }
+    }
+    return axisToCheck + shipLength <= grid.length;
+  }
+
+  function placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships) {
     let ship = Ship(Ships[shipType]);
-    if (!validCoordinates(xCoord, yCoord, ship.length, gridRoot)) return;
+    if (!validCoordinates(xCoord, yCoord, ship.length)) return;
     for (let i = 0; i < ship.length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       gameConfig.config.mainAxis === 'x'
@@ -56,6 +83,7 @@ const Gameboard = (): GameboardType => {
     receiveAttack,
     allSunk,
     allShipsPlaced,
+    validCoordinates,
   };
 };
 

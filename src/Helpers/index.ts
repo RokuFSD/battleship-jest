@@ -34,7 +34,6 @@ function validCoordinates(x: number, y: number, shipLength: number, gridRoot: st
   return axisToCheck + shipLength <= 10;
 }
 
-
 function movesWithCache() {
   let cacheMoves: { [k: string]: number } = {};
   return function move(): { x: number; y: number } {
@@ -44,10 +43,9 @@ function movesWithCache() {
       return move();
     } else {
       cacheMoves[`${x}${y}`] = 1;
-      return { x, y };
     }
+    return { x, y };
   };
 }
-
 
 export { createElement, validCoordinates, movesWithCache };
