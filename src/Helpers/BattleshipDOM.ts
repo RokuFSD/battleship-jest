@@ -1,10 +1,10 @@
 import GameMediator from '../Helpers/Mediator';
-import { GameboardType } from '../Gameboard/Gameboard';
 import { ShipType, Ships } from '../Ship/Ship';
 import { createElement, validCoordinates } from '../Helpers/index';
 import { gameConfig } from '../config/gameConfig';
 import components from '../styles/components.module.css';
 import layout from '../styles/layout.module.css';
+import { PlayerType } from 'Player/Player';
 
 const BattleshipDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -37,9 +37,10 @@ const BattleshipDOM = (() => {
   }
 
   function getItemData(target: HTMLDivElement) {
-    let x = +target.id.slice(0, 1);
-    let y = +target.id.slice(1);
-    return { x, y };
+    let gridRoot = target.id.slice(0, 1);
+    let x = +target.id.slice(1, 2);
+    let y = +target.id.slice(2);
+    return { x, y, gridRoot };
   }
 
   function handleSiblingClass(
@@ -47,10 +48,11 @@ const BattleshipDOM = (() => {
     shipLength: number,
     coords: { x: number; y: number },
     todo = 'add',
+    gridRoot = 'p',
   ) {
     for (let i = 1; i < shipLength; i++) {
       let sibling = document.getElementById(
-        `${
+        `${gridRoot}${
           gameConfig.config.mainAxis === 'x'
             ? `${coords.x}${coords.y + i}`
             : `${coords.x + i}${coords.y}`
@@ -65,8 +67,8 @@ const BattleshipDOM = (() => {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
     let shipLength = shipsToPlace[currentShip][1];
-    let { x, y } = getItemData(target);
-    if (!validCoordinates(x, y, shipLength)) return;
+    let { x, y, gridRoot } = getItemData(target);
+    if (!validCoordinates(x, y, shipLength, gridRoot)) return;
     if (evt.type === 'mouseover') {
       target.classList.add('hovered');
       handleSiblingClass('hovered', shipLength, { x, y });
@@ -88,23 +90,31 @@ const BattleshipDOM = (() => {
     root?.removeChild(modal!);
   }
 
-  function addPlayersGrids() {
-    gridPlayerOne.classList.add(`${components.gridContainerPlayer}`);
-    root?.appendChild(gridPlayerOne);
-    root?.appendChild(gridPlayerTwo);
-  }
-
   function handleClick(evt: Event) {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
-    let { x, y } = getItemData(target);
-    if (gamePhase === 'gridConfig') {
+    let { x, y, gridRoot } = getItemData(target);
+    if (gamePhase === 'gridConfig' && gridRoot !== 'c') {
       let shipLength = shipsToPlace[currentShip][1];
-      if (!validCoordinates(x, y, shipLength)) return;
-      mediator.notify(BattleshipDOM, 'placeship', { x, y, shipType: shipsToPlace[currentShip][0] });
+      if (!validCoordinates(x, y, shipLength, gridRoot)) return;
+      mediator.notify(BattleshipDOM, 'placeship', {
+        x,
+        y,
+        shipType: shipsToPlace[currentShip][0],
+        gridRoot,
+      });
       target.classList.add('ship');
       handleSiblingClass('ship', shipLength, { x, y });
       currentShip++;
+    } else if (gamePhase === 'gridConfig') {
+      let shipLength = shipsToPlace[currentShip][1];
+      if (!validCoordinates(x, y, shipLength, gridRoot)) return;
+      mediator.notify(BattleshipDOM, 'placeship', {
+        x,
+        y,
+        shipType: shipsToPlace[currentShip][0],
+        gridRoot,
+      });
     } else {
       mediator.notify(BattleshipDOM, 'handleturn', { x, y });
       setItemClass(target, turnResult);
@@ -118,15 +128,15 @@ const BattleshipDOM = (() => {
     root!.addEventListener('click', handleClick);
   }
 
-  function makeGrid(gameboard: GameboardType): HTMLElement {
+  function makeGrid(player: PlayerType): HTMLElement {
     let gridContainer = document.createElement('div');
     let gridContainerFragment = new DocumentFragment();
     gridContainer.classList.add(`${components.gridContainer}`);
-    for (let i = 0; i < gameboard.grid.length; i++) {
-      for (let j = 0; j < gameboard.grid[i].length; j++) {
+    for (let i = 0; i < player.gameboard.grid.length; i++) {
+      for (let j = 0; j < player.gameboard.grid[i].length; j++) {
         let item = createElement('div', {
           class: `${components.gridItem}`,
-          id: `${i}${j}`,
+          id: `${player.getName() !== 'cpu' ? 'p' : 'c'}${i}${j}`,
         });
         gridContainerFragment.appendChild(item);
       }
@@ -135,13 +145,17 @@ const BattleshipDOM = (() => {
     return gridContainer;
   }
 
-  function setGrid(gameboard: GameboardType, playerType: string) {
-    let grid = makeGrid(gameboard);
-    if (playerType === 'player') {
-      gridPlayerOne = grid;
-    } else {
-      gridPlayerTwo = grid;
-    }
+  function setGrid(player: PlayerType): Promise<void> {
+    return new Promise((resolve) => {
+      let grid = makeGrid(player);
+      if (player.getName() !== 'cpu') {
+        gridPlayerOne = grid;
+      } else {
+        gridPlayerTwo = grid;
+      }
+      root?.appendChild(grid);
+      resolve();
+    });
   }
 
   function placeShipsModal() {
@@ -159,7 +173,12 @@ const BattleshipDOM = (() => {
         {
           class: `${layout.dragDiv}`,
         },
-        [createElement('h2', {}, 'Place your ships'), axisElement, rotateBtn, gridPlayerOne],
+        [
+          createElement('h2', {}, 'Place your ships'),
+          axisElement,
+          rotateBtn,
+          gridPlayerOne.cloneNode(true),
+        ],
       ),
     ]);
     root?.appendChild(outterDiv);
@@ -168,7 +187,6 @@ const BattleshipDOM = (() => {
   function closeSetup() {
     removeMouseEvents();
     closeModal();
-    addPlayersGrids();
   }
 
   return {

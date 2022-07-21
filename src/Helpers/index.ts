@@ -5,7 +5,7 @@ type PropTypes = { [k: string]: string } | undefined;
 function createElement(
   tagName: string,
   props: PropTypes,
-  innerContent?: HTMLElement[] | string,
+  innerContent?: HTMLElement[] | string | Node[],
 ): HTMLElement {
   const element = document.createElement(tagName);
 
@@ -22,18 +22,16 @@ function createElement(
   return element;
 }
 
-function validCoordinates(x: number, y: number, shipLength: number): boolean {
+function validCoordinates(x: number, y: number, shipLength: number, gridRoot: string): boolean {
   let axisToCheck = gameConfig.config.mainAxis === 'y' ? x : y;
   for (let i = 1; i < shipLength && axisToCheck + i <= 9; i++) {
-    let sibling = document.getElementById(
-      `${gameConfig.config.mainAxis === 'x' ? `${x}${y + i}` : `${x + i}${y}`}`,
-    );
+    let id = `${gridRoot}${gameConfig.config.mainAxis === 'x' ? `${x}${y + i}` : `${x + i}${y}`}`;
+    let sibling = document.getElementById(id);
     if (sibling!.classList.contains('ship')) {
       return false;
     }
   }
   return axisToCheck + shipLength <= 10;
-  // return x < 10 && y + shipLength <= 10;
 }
 
 export { createElement, validCoordinates };

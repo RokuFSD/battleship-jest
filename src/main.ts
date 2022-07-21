@@ -11,4 +11,3 @@ new GameMediator(Game, BattleshipDOM);
 
 Game.start();
 Game.makeUI();
-Game.placeShips();

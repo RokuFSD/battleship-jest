@@ -5,7 +5,7 @@ import { Ships } from '../Ship/Ship';
 
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
-  let playerOne: PlayerType = Player(Gameboard());
+  let playerOne: PlayerType = Player(Gameboard(), 'player');
   let playerTwo: PlayerType = Player(Gameboard());
   let currentPlayer = 'player';
 
@@ -42,14 +42,16 @@ const Game = (() => {
   }
 
   function placeShips() {
-    mediator.notify(Game, 'placeShips');
+    playerTwo.autoplace();
     /*TODO PLACE AUTO BOT*/
-    playerTwo.gameboard.placeShip(2, 2, 'carrier');
-    playerTwo.gameboard.placeShip(1, 1, 'destroyer');
   }
 
-  function addShip(x: number, y: number, shipType: keyof typeof Ships) {
-    playerOne.gameboard.placeShip(x, y, shipType);
+  function addShip(x: number, y: number, shipType: keyof typeof Ships, gridRoot: 'c' | 'p') {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    gridRoot === 'p'
+      ? playerOne.gameboard.placeShip(x, y, shipType, gridRoot)
+      : playerTwo.gameboard.placeShip(x, y, shipType, gridRoot);
+
     if (playerOne.gameboard.allShipsPlaced()) {
       mediator.notify(Game, 'startPlaying');
     }

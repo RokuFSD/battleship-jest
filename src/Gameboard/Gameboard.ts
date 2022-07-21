@@ -4,7 +4,7 @@ import { gameConfig } from '../config/gameConfig';
 
 export type GameboardType = {
   grid: string[][];
-  placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships): string | undefined;
+  placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships, gridRoot: 'c' | 'p'): string | undefined;
   receiveAttack(xCoord: number, yCoord: number): string;
   allSunk(): boolean;
   allShipsPlaced(): boolean;
@@ -16,9 +16,9 @@ const Gameboard = (): GameboardType => {
     .fill(null)
     .map(() => Array(10).fill('empty'));
 
-  function placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships) {
+  function placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships, gridRoot = 'p') {
     let ship = Ship(Ships[shipType]);
-    if (!validCoordinates(xCoord, yCoord, ship.length)) return;
+    if (!validCoordinates(xCoord, yCoord, ship.length, gridRoot)) return;
     for (let i = 0; i < ship.length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       gameConfig.config.mainAxis === 'x'

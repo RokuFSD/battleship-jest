@@ -17,18 +17,19 @@ class GameMediator implements Mediator {
     this.secondComponent.setMediator(this);
   }
 
-  public notify(sender: typeof Game | typeof BattleshipDOM, event: string, data?: any) {
+  public async notify(sender: typeof Game | typeof BattleshipDOM, event: string, data?: any) {
     if (sender === this.firstComponent) {
       if (event === 'makeui') {
-        this.secondComponent.setGrid(sender.playerOne.gameboard, 'player');
-        this.secondComponent.setGrid(sender.playerTwo.gameboard, 'cpu');
+        this.secondComponent.setGrid(sender.playerOne).then(() => {
+          this.secondComponent.setGrid(sender.playerTwo).then(() => {
+            this.firstComponent.placeShips();
+            this.secondComponent.placeShipsModal();
+          });
+        });
       }
       if (event === 'start') {
         this.secondComponent.setupEvent();
         this.secondComponent.setGamePhase('gridConfig');
-      }
-      if (event === 'placeShips') {
-        this.secondComponent.placeShipsModal();
       }
       if (event === 'turnPlayed') {
         this.secondComponent.setTurnResult(data as string);
@@ -44,8 +45,8 @@ class GameMediator implements Mediator {
         this.firstComponent.handleTurn(x, y);
       }
       if (event === 'placeship') {
-        let { x, y, shipType } = data;
-        this.firstComponent.addShip(+x, +y, shipType);
+        let { x, y, shipType, gridRoot } = data;
+        this.firstComponent.addShip(+x, +y, shipType, gridRoot);
       }
     }
   }

@@ -1,4 +1,6 @@
 import { GameboardType } from '../Gameboard/Gameboard';
+import { Ships } from '../Ship/Ship';
+import { validCoordinates } from '../Helpers';
 
 type PlayerStatus = 'playing' | 'winner';
 
@@ -8,11 +10,12 @@ export type PlayerType = {
   getName(): string;
   getStatus(): PlayerStatus;
   makeAttack(): void;
+  autoplace(): void;
 };
 
-const Player = (Gameboard: GameboardType) => {
+const Player = (Gameboard: GameboardType, playerName: string = 'cpu') => {
   let gameboard: GameboardType = Gameboard;
-  let name: string = '';
+  let name: string = playerName;
   let status: PlayerStatus = 'playing';
   let cacheMoves: { [k: string]: number } = {};
 
@@ -42,8 +45,25 @@ const Player = (Gameboard: GameboardType) => {
 
   function makeAttack() {
     let { x, y } = randomMove();
-    let item = document.getElementById(`${x}${y}`)!;
+    let item = document.getElementById(`p${x}${y}`)!;
     item.dispatchEvent(new Event('click', { bubbles: true }));
+  }
+
+  function autoplace() {
+    let ships = Object.keys(Ships);
+    for (let ship of ships) {
+      let shipLength = Ships[ship as keyof typeof Ships];
+      let x = Math.floor(Math.random() * 10);
+      let y = Math.floor(Math.random() * 10);
+      while (!validCoordinates(x, y, shipLength, 'c')) {
+        x = Math.floor(Math.random() * 10);
+        y = Math.floor(Math.random() * 10);
+      }
+      let item = document.getElementById(`c${x}${y}`)!;
+      item.dispatchEvent(new Event('click', { bubbles: true }));
+      //gameboard.placeShip(x, y, ship as keyof typeof Ships);
+      console.log('placed');
+    }
   }
 
   return {
@@ -52,6 +72,7 @@ const Player = (Gameboard: GameboardType) => {
     setName,
     getName,
     makeAttack,
+    autoplace,
   };
 };
 
