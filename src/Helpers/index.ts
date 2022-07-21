@@ -34,4 +34,20 @@ function validCoordinates(x: number, y: number, shipLength: number, gridRoot: st
   return axisToCheck + shipLength <= 10;
 }
 
-export { createElement, validCoordinates };
+
+function movesWithCache() {
+  let cacheMoves: { [k: string]: number } = {};
+  return function move(): { x: number; y: number } {
+    let x = Math.floor(Math.random() * 10);
+    let y = Math.floor(Math.random() * 10);
+    if (cacheMoves[`${x}${y}`] == 1) {
+      return move();
+    } else {
+      cacheMoves[`${x}${y}`] = 1;
+      return { x, y };
+    }
+  };
+}
+
+
+export { createElement, validCoordinates, movesWithCache };
