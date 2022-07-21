@@ -20,12 +20,15 @@ class GameMediator implements Mediator {
   public async notify(sender: typeof Game | typeof BattleshipDOM, event: string, data?: any) {
     if (sender === this.firstComponent) {
       if (event === 'makeui') {
-        this.secondComponent.setGrid(sender.playerOne).then(() => {
-          this.secondComponent.setGrid(sender.playerTwo).then(() => {
+        this.secondComponent
+          .setGrid(sender.playerOne)
+          .then(() => {
+            this.secondComponent.setGrid(sender.playerTwo);
+          })
+          .then(() => {
             this.firstComponent.placeShips();
             this.secondComponent.placeShipsModal();
           });
-        });
       }
       if (event === 'start') {
         this.secondComponent.setupEvent();

@@ -43,7 +43,6 @@ const Game = (() => {
 
   function placeShips() {
     playerTwo.autoplace();
-    /*TODO PLACE AUTO BOT*/
   }
 
   function addShip(x: number, y: number, shipType: keyof typeof Ships, gridRoot: 'c' | 'p') {

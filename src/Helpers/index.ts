@@ -26,7 +26,7 @@ function validCoordinates(x: number, y: number, shipLength: number, gridRoot: st
   let axisToCheck = gameConfig.config.mainAxis === 'y' ? x : y;
   for (let i = 1; i < shipLength && axisToCheck + i <= 9; i++) {
     let id = `${gridRoot}${gameConfig.config.mainAxis === 'x' ? `${x}${y + i}` : `${x + i}${y}`}`;
-    let sibling = document.getElementById(id);
+    let sibling = document.querySelector(`[data-cell="${id}"]`);
     if (sibling!.classList.contains('ship')) {
       return false;
     }

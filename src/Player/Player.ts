@@ -20,8 +20,8 @@ const Player = (Gameboard: GameboardType, playerName: string = 'cpu') => {
 
   function makeAttack() {
     let { x, y } = randomAttacks();
-    let item = document.getElementById(`p${x}${y}`)!;
-    item.dispatchEvent(new Event('click', { bubbles: true }));
+    let item = document.querySelector(`[data-cell="p${x}${y}"]`);
+    item?.dispatchEvent(new Event('click', { bubbles: true }));
   }
 
   function autoplace() {
@@ -33,7 +33,7 @@ const Player = (Gameboard: GameboardType, playerName: string = 'cpu') => {
       while (!validCoordinates(x, y, shipLength, 'c')) {
         ({ x, y } = randomMove());
       }
-      let item = document.getElementById(`c${x}${y}`)!;
+      let item = document.querySelector(`[data-cell="c${x}${y}"]`)!;
       item.dispatchEvent(new Event('click', { bubbles: true }));
     }
   }
