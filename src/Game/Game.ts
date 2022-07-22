@@ -2,12 +2,13 @@ import GameMediator from '../Helpers/Mediator';
 import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
 import { Ships } from '../Ship/Ship';
+import { gameConfig } from '../config/gameConfig';
 
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
   let playerOne: PlayerType = Player(Gameboard(), 'player');
   let playerTwo: PlayerType = Player(Gameboard());
-  let currentPlayer = 'player';
+  let currentPlayer = playerOne;
 
   function setMediator(newMediator: GameMediator) {
     mediator = newMediator;
@@ -19,6 +20,8 @@ const Game = (() => {
 
   function start() {
     mediator.notify(Game, 'start');
+    gameConfig.setPlayerOne(playerOne);
+    gameConfig.setPlayerTwo(playerTwo);
   }
 
   function checkWinner() {
@@ -27,12 +30,12 @@ const Game = (() => {
 
   function handleTurn(x: string, y: string) {
     let moveResult: string = '';
-    if (currentPlayer === 'player') {
-      currentPlayer = 'cpu';
+    if (currentPlayer.getName() !== 'cpu') {
+      currentPlayer = playerTwo;
       moveResult = playerTwo.gameboard.receiveAttack(Number(x), Number(y));
       playerTwo.makeAttack();
     } else {
-      currentPlayer = 'player';
+      currentPlayer = playerOne;
       moveResult = playerOne.gameboard.receiveAttack(Number(x), Number(y));
     }
     if (checkWinner()) {
@@ -45,12 +48,12 @@ const Game = (() => {
     playerTwo.autoplace();
   }
 
-  function addShip(x: number, y: number, shipType: keyof typeof Ships, gridRoot: 'c' | 'p') {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    gridRoot === 'p'
-      ? playerOne.gameboard.placeShip(x, y, shipType, gridRoot)
-      : playerTwo.gameboard.placeShip(x, y, shipType, gridRoot);
-
+  function addShip(x: number, y: number, shipType: keyof typeof Ships) {
+    if (!playerTwo.gameboard.allShipsPlaced()) {
+      playerTwo.gameboard.placeShip(x, y, shipType);
+    } else {
+      playerOne.gameboard.placeShip(x, y, shipType);
+    }
     if (playerOne.gameboard.allShipsPlaced()) {
       mediator.notify(Game, 'startPlaying');
     }

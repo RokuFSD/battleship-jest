@@ -7,7 +7,6 @@ export type GameboardType = {
     xCoord: number,
     yCoord: number,
     shipType: keyof typeof Ships,
-    gridRoot: 'c' | 'p',
   ): string | undefined;
   receiveAttack(xCoord: number, yCoord: number): string;
   allSunk(): boolean;

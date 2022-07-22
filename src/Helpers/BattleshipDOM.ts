@@ -1,10 +1,10 @@
 import GameMediator from '../Helpers/Mediator';
 import { ShipType, Ships } from '../Ship/Ship';
-import { createElement, validCoordinates } from '../Helpers/index';
+import { createElement } from '../Helpers/index';
 import { gameConfig } from '../config/gameConfig';
+import { PlayerType } from 'Player/Player';
 import components from '../styles/components.module.css';
 import layout from '../styles/layout.module.css';
-import { PlayerType } from 'Player/Player';
 
 const BattleshipDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -64,7 +64,6 @@ const BattleshipDOM = (() => {
           sibling.classList.remove(className);
         }
       });
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     }
   }
 
@@ -72,8 +71,8 @@ const BattleshipDOM = (() => {
     let target = evt.target as HTMLDivElement;
     if (!target.classList.contains(`${components.gridItem}`)) return;
     let shipLength = shipsToPlace[currentShip][1];
-    let { x, y, gridRoot } = getItemData(target);
-    if (!validCoordinates(x, y, shipLength, gridRoot)) return;
+    let { x, y } = getItemData(target);
+    if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipLength)) return;
     if (evt.type === 'mouseover') {
       handleSiblingClass('hovered', shipLength, { x, y });
     }
@@ -93,17 +92,15 @@ const BattleshipDOM = (() => {
     root?.removeChild(modal!);
   }
 
-  function clickToPlace(data: { x: number; y: number; gridRoot: string }) {
-    /* Change the current player implementation en game to fix gridRoot*/
+  function clickToPlace(data: { x: number; y: number }) {
     mediator.notify(BattleshipDOM, 'placeship', {
       x: data.x,
       y: data.y,
       shipType: shipsToPlace[currentShip][0],
-      gridRoot: data.gridRoot,
     });
   }
 
-  function playerClick(data: { x: number; y: number; gridRoot: string }) {
+  function playerClick(data: { x: number; y: number }) {
     clickToPlace(data);
     handleSiblingClass('ship', shipsToPlace[currentShip][1], { x: data.x, y: data.y });
   }
@@ -115,11 +112,19 @@ const BattleshipDOM = (() => {
     return data;
   }
 
+  /*TODO: Refactor this function*/
   function handleClick(evt: Event) {
     let data = validTarget(evt);
     if (data) {
       if (gamePhase === 'gridConfig' && data.gridRoot !== 'c') {
-        if (!validCoordinates(data.x, data.y, shipsToPlace[currentShip][1], data.gridRoot)) return;
+        if (
+          !gameConfig.playerOne.gameboard.validCoordinates(
+            data.x,
+            data.y,
+            shipsToPlace[currentShip][1],
+          )
+        )
+          return;
         playerClick(data);
       } else if (gamePhase === 'gridConfig' && data.gridRoot === 'c') {
         clickToPlace(data);

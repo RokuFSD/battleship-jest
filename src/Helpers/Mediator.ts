@@ -6,50 +6,50 @@ interface Mediator {
 }
 
 class GameMediator implements Mediator {
-  private readonly firstComponent: typeof Game;
+  private readonly gameComponent: typeof Game;
 
-  private readonly secondComponent: typeof BattleshipDOM;
+  private readonly domComponent: typeof BattleshipDOM;
 
   constructor(c1: typeof Game, c2: typeof BattleshipDOM) {
-    this.firstComponent = c1;
-    this.firstComponent.setMediator(this);
-    this.secondComponent = c2;
-    this.secondComponent.setMediator(this);
+    this.gameComponent = c1;
+    this.gameComponent.setMediator(this);
+    this.domComponent = c2;
+    this.domComponent.setMediator(this);
   }
 
-  public async notify(sender: typeof Game | typeof BattleshipDOM, event: string, data?: any) {
-    if (sender === this.firstComponent) {
+  public notify(sender: typeof Game | typeof BattleshipDOM, event: string, data?: any) {
+    if (sender === this.gameComponent) {
       if (event === 'makeui') {
-        this.secondComponent
+        this.domComponent
           .setGrid(sender.playerOne)
           .then(() => {
-            this.secondComponent.setGrid(sender.playerTwo);
+            this.domComponent.setGrid(sender.playerTwo);
           })
           .then(() => {
-            this.firstComponent.placeShips();
-            this.secondComponent.placeShipsModal();
+            this.gameComponent.placeShips();
+            this.domComponent.placeShipsModal();
           });
       }
       if (event === 'start') {
-        this.secondComponent.setupEvent();
-        this.secondComponent.setGamePhase('gridConfig');
+        this.domComponent.setupEvent();
+        this.domComponent.setGamePhase('gridConfig');
       }
       if (event === 'turnPlayed') {
-        this.secondComponent.setTurnResult(data as string);
+        this.domComponent.setTurnResult(data as string);
       }
       if (event === 'startPlaying') {
-        this.secondComponent.setGamePhase('playing');
-        this.secondComponent.closeSetup();
+        this.domComponent.setGamePhase('playing');
+        this.domComponent.closeSetup();
       }
     }
-    if (sender === this.secondComponent) {
+    if (sender === this.domComponent) {
       if (event === 'handleturn') {
         let { x, y } = data as { x: string; y: string };
-        this.firstComponent.handleTurn(x, y);
+        this.gameComponent.handleTurn(x, y);
       }
       if (event === 'placeship') {
-        let { x, y, shipType, gridRoot } = data;
-        this.firstComponent.addShip(+x, +y, shipType, gridRoot);
+        let { x, y, shipType } = data;
+        this.gameComponent.addShip(+x, +y, shipType);
       }
     }
   }

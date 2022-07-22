@@ -1,5 +1,3 @@
-import { gameConfig } from '../config/gameConfig';
-
 type PropTypes = { [k: string]: string } | undefined;
 
 function createElement(
@@ -22,18 +20,6 @@ function createElement(
   return element;
 }
 
-function validCoordinates(x: number, y: number, shipLength: number, gridRoot: string): boolean {
-  let axisToCheck = gameConfig.config.mainAxis === 'y' ? x : y;
-  for (let i = 1; i < shipLength && axisToCheck + i <= 9; i++) {
-    let id = `${gridRoot}${gameConfig.config.mainAxis === 'x' ? `${x}${y + i}` : `${x + i}${y}`}`;
-    let sibling = document.querySelector(`[data-cell="${id}"]`);
-    if (sibling!.classList.contains('ship')) {
-      return false;
-    }
-  }
-  return axisToCheck + shipLength <= 10;
-}
-
 function movesWithCache() {
   let cacheMoves: { [k: string]: number } = {};
   return function move(): { x: number; y: number } {
@@ -48,4 +34,4 @@ function movesWithCache() {
   };
 }
 
-export { createElement, validCoordinates, movesWithCache };
+export { createElement, movesWithCache };
