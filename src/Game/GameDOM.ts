@@ -3,8 +3,9 @@ import { createElement } from '../Helpers';
 import { ShipType, Ships } from '../Ship/Ship';
 import { gameConfig } from '../config/gameConfig';
 import { PlayerType } from '../Player/Player';
-import Modal from '../Components/Modal';
 import components from '../styles/components.module.css';
+// @ts-ignore
+import { Modal, Button } from '../Components';
 
 const GameDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -47,22 +48,17 @@ const GameDOM = (() => {
     className: string,
     shipLength: number,
     coords: { x: number; y: number },
-    todo = 'add',
-    gridRoot = 'p',
+    todo: 'add' | 'remove' = 'add',
   ) {
     for (let i = 0; i < shipLength; i++) {
       let siblingCoords =
         gameConfig.config.mainAxis === 'x'
           ? `${coords.x}${coords.y + i}`
           : `${coords.x + i}${coords.y}`;
-      let selector = `[data-cell="${gridRoot}${siblingCoords}"]`;
+      let selector = `[data-cell="p${siblingCoords}"]`;
       const siblings = document.querySelectorAll(selector);
       siblings.forEach((sibling) => {
-        if (todo === 'add') {
-          sibling.classList.add(className);
-        } else {
-          sibling.classList.remove(className);
-        }
+        sibling.classList[todo](className);
       });
     }
   }
@@ -166,18 +162,16 @@ const GameDOM = (() => {
 
   function openStartModal() {
     let axisElement = createElement('div', {}, `Axis: ${gameConfig.config.mainAxis}`);
-    let rotateBtn = createElement('button', { class: `${components.btn}` }, 'Rotate');
-    rotateBtn.addEventListener('click', () => {
-      gameConfig.setConfig(
-        gameConfig.config.mainAxis === 'x' ? { mainAxis: 'y' } : { mainAxis: 'x' },
-      );
+    let rotateBtn = Button('rotate');
+    rotateBtn.addEvent('click', () => {
+      gameConfig.toggleAxis();
       axisElement.textContent = `Axis: ${gameConfig.config.mainAxis}`;
     });
 
     gameModal.addItem([
       createElement('h2', {}, 'Place your ships'),
       axisElement,
-      rotateBtn,
+      rotateBtn.getButton(),
       gridPlayerOne.cloneNode(true),
     ]);
 

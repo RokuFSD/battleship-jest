@@ -18,6 +18,9 @@ const gameConfig = {
   setPlayerTwo: function (playerTwo: PlayerType) {
     this.playerTwo = playerTwo;
   },
+  toggleAxis: function () {
+    this.config = { ...this.config, mainAxis: this.config.mainAxis === 'x' ? 'y' : 'x' };
+  },
 };
 
 export { gameConfig };
