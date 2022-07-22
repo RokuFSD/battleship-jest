@@ -1,12 +1,12 @@
-import GameMediator from '../Helpers/Mediator';
+import GameMediator from './GameMediator';
 import { ShipType, Ships } from '../Ship/Ship';
-import { createElement } from '../Helpers/index';
+import { createElement } from '../Helpers';
 import { gameConfig } from '../config/gameConfig';
 import { PlayerType } from 'Player/Player';
 import components from '../styles/components.module.css';
 import layout from '../styles/layout.module.css';
 
-const BattleshipDOM = (() => {
+const GameDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
   let root: HTMLElement | undefined = document.getElementById('app')!;
   let gridPlayerOne: HTMLElement = document.createElement('div');
@@ -27,11 +27,12 @@ const BattleshipDOM = (() => {
     gamePhase = phase;
   }
 
-  function setItemClass(element: HTMLElement, status: string | ShipType) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    typeof status === 'string'
-      ? element.classList.add(`${components[status]}`)
-      : element.classList.add(`${components.gridItemBoat}`);
+  function setShipStatus(element: HTMLElement, status: string | ShipType) {
+    if (typeof status === 'string') {
+      element.classList.add(`${components[status]}`);
+    } else {
+      element.classList.add(`${components.gridItemBoat}`);
+    }
   }
 
   function getItemData(target: HTMLDivElement) {
@@ -56,10 +57,11 @@ const BattleshipDOM = (() => {
       let selector = `[data-cell="${gridRoot}${siblingCoords}"]`;
       const siblings = document.querySelectorAll(selector);
       siblings.forEach((sibling) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        todo === 'add'
-          ? sibling.classList.add(`${className}`)
-          : sibling.classList.remove(`${className}`);
+        if (todo === 'add') {
+          sibling.classList.add(className);
+        } else {
+          sibling.classList.remove(className);
+        }
       });
     }
   }
@@ -97,15 +99,22 @@ const BattleshipDOM = (() => {
 
   function clickToPlace({ x, y }: { x: number; y: number }) {
     let dataToNotify = { x, y, shipType: shipsToPlace[currentShip][0] };
-    mediator.notify(BattleshipDOM, 'placeship', dataToNotify);
+    mediator.notify(GameDOM, 'placeship', dataToNotify);
   }
 
-  function playerClick({ x, y }: { x: number; y: number }) {
+  function onPlayerPlaceShip({ x, y }: { x: number; y: number }) {
     clickToPlace({ x, y });
     handleSiblingClass('ship', shipsToPlace[currentShip][1], { x, y });
   }
 
-  /*TODO: Refactor this function*/
+  function onClickAttack({ x, y }: { x: number; y: number }) {
+    mediator.notify(GameDOM, 'handleturn', { x, y });
+  }
+
+  function nextShip() {
+    currentShip = currentShip >= 4 ? 0 : currentShip + 1;
+  }
+
   function handleClick(evt: Event) {
     let data = validTarget(evt);
     if (data) {
@@ -113,15 +122,14 @@ const BattleshipDOM = (() => {
       if (gamePhase === 'gridConfig' && gridRoot !== 'c') {
         if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
           return;
-        playerClick({ x, y });
+        onPlayerPlaceShip({ x, y });
       } else if (gamePhase === 'gridConfig' && gridRoot === 'c') {
         clickToPlace({ x, y });
       } else {
-        mediator.notify(BattleshipDOM, 'handleturn', { x, y });
-        setItemClass(evt.target as HTMLDivElement, turnResult);
+        onClickAttack({ x, y });
+        setShipStatus(evt.target as HTMLDivElement, turnResult);
       }
-      currentShip++;
-      if (currentShip === 5) currentShip = 0;
+      nextShip();
     }
   }
 
@@ -203,4 +211,4 @@ const BattleshipDOM = (() => {
   };
 })();
 
-export default BattleshipDOM;
+export default GameDOM;

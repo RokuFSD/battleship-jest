@@ -34,17 +34,18 @@ const Gameboard = (): GameboardType => {
     let ship = Ship(Ships[shipType]);
     if (!validCoordinates(xCoord, yCoord, ship.length)) return;
     for (let i = 0; i < ship.length; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      gameConfig.config.mainAxis === 'x'
-        ? (grid[xCoord][yCoord + i] = { ship: ship, place: i })
-        : (grid[xCoord + i][yCoord] = { ship: ship, place: i });
+      if (gameConfig.config.mainAxis === 'x') {
+        grid[xCoord][yCoord + i] = { ship, place: i };
+      } else {
+        grid[xCoord + i][yCoord] = { ship, place: i };
+      }
     }
     ships.push(ship);
     return 'placed';
   }
 
   function allShipsPlaced() {
-    return ships.length === 5;
+    return ships.length === 5; //Change this to the number of ships
   }
 
   function receiveAttack(xCoord: number, yCoord: number): string {

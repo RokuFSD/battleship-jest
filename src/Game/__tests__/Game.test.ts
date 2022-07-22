@@ -1,4 +1,4 @@
-import Game from './Game';
+import Game from '../Game';
 
 describe('Game start', () => {
   test('Game players', () => {

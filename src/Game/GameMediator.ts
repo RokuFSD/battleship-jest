@@ -1,5 +1,5 @@
-import Game from '../Game/Game';
-import BattleshipDOM from './BattleshipDOM';
+import Game from './Game';
+import GameDOM from './GameDOM';
 
 interface Mediator {
   notify(sender: Object, event: string): void;
@@ -8,16 +8,16 @@ interface Mediator {
 class GameMediator implements Mediator {
   private readonly gameComponent: typeof Game;
 
-  private readonly domComponent: typeof BattleshipDOM;
+  private readonly domComponent: typeof GameDOM;
 
-  constructor(c1: typeof Game, c2: typeof BattleshipDOM) {
+  constructor(c1: typeof Game, c2: typeof GameDOM) {
     this.gameComponent = c1;
     this.gameComponent.setMediator(this);
     this.domComponent = c2;
     this.domComponent.setMediator(this);
   }
 
-  public notify(sender: typeof Game | typeof BattleshipDOM, event: string, data?: any) {
+  public notify(sender: typeof Game | typeof GameDOM, event: string, data?: any) {
     if (sender === this.gameComponent) {
       if (event === 'makeui') {
         this.domComponent

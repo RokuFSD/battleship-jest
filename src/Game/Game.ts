@@ -1,4 +1,4 @@
-import GameMediator from '../Helpers/Mediator';
+import GameMediator from './GameMediator';
 import Player, { PlayerType } from '../Player/Player';
 import Gameboard from '../Gameboard/Gameboard';
 import { Ships } from '../Ship/Ship';
