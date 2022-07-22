@@ -28,11 +28,10 @@ const BattleshipDOM = (() => {
   }
 
   function setItemClass(element: HTMLElement, status: string | ShipType) {
-    if (typeof status !== 'string') {
-      element.classList.add(`${components.gridItemBoat}`);
-    } else {
-      element.classList.add(`${components[status]}`);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    typeof status === 'string'
+      ? element.classList.add(`${components[status]}`)
+      : element.classList.add(`${components.gridItemBoat}`);
   }
 
   function getItemData(target: HTMLDivElement) {
@@ -50,13 +49,12 @@ const BattleshipDOM = (() => {
     gridRoot = 'p',
   ) {
     for (let i = 0; i < shipLength; i++) {
-      const siblings = document.querySelectorAll(
-        `[data-cell="${gridRoot}${
-          gameConfig.config.mainAxis === 'x'
-            ? `${coords.x}${coords.y + i}`
-            : `${coords.x + i}${coords.y}`
-        }"]`,
-      );
+      let siblingCoords =
+        gameConfig.config.mainAxis === 'x'
+          ? `${coords.x}${coords.y + i}`
+          : `${coords.x + i}${coords.y}`;
+      let selector = `[data-cell="${gridRoot}${siblingCoords}"]`;
+      const siblings = document.querySelectorAll(selector);
       siblings.forEach((sibling) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         todo === 'add'
@@ -68,9 +66,7 @@ const BattleshipDOM = (() => {
 
   function validTarget(evt: Event): { x: number; y: number; gridRoot: string } | undefined {
     let target = evt.target as HTMLDivElement;
-    let data: { x: number; y: number; gridRoot: string } | undefined;
-    data = target.classList.contains(`${components.gridItem}`) ? getItemData(target) : undefined;
-    return data;
+    return target.classList.contains(`${components.gridItem}`) ? getItemData(target) : undefined;
   }
 
   function handleMouse(evt: Event) {
@@ -99,37 +95,29 @@ const BattleshipDOM = (() => {
     root?.removeChild(modal!);
   }
 
-  function clickToPlace(data: { x: number; y: number }) {
-    mediator.notify(BattleshipDOM, 'placeship', {
-      x: data.x,
-      y: data.y,
-      shipType: shipsToPlace[currentShip][0],
-    });
+  function clickToPlace({ x, y }: { x: number; y: number }) {
+    let dataToNotify = { x, y, shipType: shipsToPlace[currentShip][0] };
+    mediator.notify(BattleshipDOM, 'placeship', dataToNotify);
   }
 
-  function playerClick(data: { x: number; y: number }) {
-    clickToPlace(data);
-    handleSiblingClass('ship', shipsToPlace[currentShip][1], { x: data.x, y: data.y });
+  function playerClick({ x, y }: { x: number; y: number }) {
+    clickToPlace({ x, y });
+    handleSiblingClass('ship', shipsToPlace[currentShip][1], { x, y });
   }
 
   /*TODO: Refactor this function*/
   function handleClick(evt: Event) {
     let data = validTarget(evt);
     if (data) {
-      if (gamePhase === 'gridConfig' && data.gridRoot !== 'c') {
-        if (
-          !gameConfig.playerOne.gameboard.validCoordinates(
-            data.x,
-            data.y,
-            shipsToPlace[currentShip][1],
-          )
-        )
+      let { x, y, gridRoot } = data;
+      if (gamePhase === 'gridConfig' && gridRoot !== 'c') {
+        if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
           return;
-        playerClick(data);
-      } else if (gamePhase === 'gridConfig' && data.gridRoot === 'c') {
-        clickToPlace(data);
+        playerClick({ x, y });
+      } else if (gamePhase === 'gridConfig' && gridRoot === 'c') {
+        clickToPlace({ x, y });
       } else {
-        mediator.notify(BattleshipDOM, 'handleturn', { x: data.x, y: data.y });
+        mediator.notify(BattleshipDOM, 'handleturn', { x, y });
         setItemClass(evt.target as HTMLDivElement, turnResult);
       }
       currentShip++;
