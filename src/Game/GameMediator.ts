@@ -27,7 +27,7 @@ class GameMediator implements Mediator {
           })
           .then(() => {
             this.gameComponent.placeShips();
-            this.domComponent.placeShipsModal();
+            this.domComponent.openStartModal();
           });
       }
       if (event === 'start') {

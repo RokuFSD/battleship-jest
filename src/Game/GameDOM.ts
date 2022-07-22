@@ -1,10 +1,10 @@
 import GameMediator from './GameMediator';
-import { ShipType, Ships } from '../Ship/Ship';
 import { createElement } from '../Helpers';
+import { ShipType, Ships } from '../Ship/Ship';
 import { gameConfig } from '../config/gameConfig';
-import { PlayerType } from 'Player/Player';
+import { PlayerType } from '../Player/Player';
+import Modal from '../Components/Modal';
 import components from '../styles/components.module.css';
-import layout from '../styles/layout.module.css';
 
 const GameDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -14,6 +14,7 @@ const GameDOM = (() => {
   let currentShip = 0;
   let gamePhase: string = 'idle';
   let turnResult: string = '';
+  let gameModal = Modal();
 
   function setTurnResult(status: string) {
     turnResult = status;
@@ -92,11 +93,6 @@ const GameDOM = (() => {
     root!.removeEventListener('mouseup', handleMouse);
   }
 
-  function closeModal() {
-    let modal = document.querySelector(`.${layout.outter}`);
-    root?.removeChild(modal!);
-  }
-
   function clickToPlace({ x, y }: { x: number; y: number }) {
     let dataToNotify = { x, y, shipType: shipsToPlace[currentShip][0] };
     mediator.notify(GameDOM, 'placeship', dataToNotify);
@@ -168,7 +164,7 @@ const GameDOM = (() => {
     });
   }
 
-  function placeShipsModal() {
+  function openStartModal() {
     let axisElement = createElement('div', {}, `Axis: ${gameConfig.config.mainAxis}`);
     let rotateBtn = createElement('button', { class: `${components.btn}` }, 'Rotate');
     rotateBtn.addEventListener('click', () => {
@@ -177,33 +173,27 @@ const GameDOM = (() => {
       );
       axisElement.textContent = `Axis: ${gameConfig.config.mainAxis}`;
     });
-    let outterDiv = createElement('div', { class: `${layout.outter}` }, [
-      createElement(
-        'div',
-        {
-          class: `${layout.dragDiv}`,
-        },
-        [
-          createElement('h2', {}, 'Place your ships'),
-          axisElement,
-          rotateBtn,
-          gridPlayerOne.cloneNode(true),
-        ],
-      ),
+
+    gameModal.addItem([
+      createElement('h2', {}, 'Place your ships'),
+      axisElement,
+      rotateBtn,
+      gridPlayerOne.cloneNode(true),
     ]);
-    root?.appendChild(outterDiv);
+
+    root?.appendChild(gameModal.getModal());
   }
 
   function closeSetup() {
     gridPlayerOne.classList.add(`${components.gridContainerPlayer}`);
+    gameModal.closeModal();
     removeMouseEvents();
-    closeModal();
   }
 
   return {
     setGrid,
     setupEvent,
-    placeShipsModal,
+    openStartModal,
     setTurnResult,
     setMediator,
     setGamePhase,

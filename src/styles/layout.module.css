@@ -10,7 +10,7 @@
   transform: translate(-50%, -50%);
 }
 
-.outter {
+.modalOutter {
   position: absolute;
   height: 100vh;
   width: 100vw;
@@ -18,14 +18,8 @@
   z-index: 1000;
 }
 
-.dragDiv {
+.modal {
   background-color: rgba(255, 255, 255, 1);
-  width: 30rem;
-  height: 30rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -33,16 +27,16 @@
   gap: 1rem;
 }
 
-.dragDiv h2 {
+.modal h2 {
   flex-basis: 100%;
   align-self: center;
 }
 
-.dragDiv > div {
+.modal > div {
   flex-basis: auto;
 }
 
-.dragDiv button {
+.modal button {
   max-width: 9.5rem;
   flex-basis: 100%;
 }
