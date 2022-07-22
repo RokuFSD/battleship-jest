@@ -58,26 +58,33 @@ const BattleshipDOM = (() => {
         }"]`,
       );
       siblings.forEach((sibling) => {
-        if (todo === 'add') {
-          sibling.classList.add(className);
-        } else {
-          sibling.classList.remove(className);
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        todo === 'add'
+          ? sibling.classList.add(`${className}`)
+          : sibling.classList.remove(`${className}`);
       });
     }
   }
 
-  function handleMouse(evt: Event) {
+  function validTarget(evt: Event): { x: number; y: number; gridRoot: string } | undefined {
     let target = evt.target as HTMLDivElement;
-    if (!target.classList.contains(`${components.gridItem}`)) return;
-    let shipLength = shipsToPlace[currentShip][1];
-    let { x, y } = getItemData(target);
-    if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipLength)) return;
-    if (evt.type === 'mouseover') {
-      handleSiblingClass('hovered', shipLength, { x, y });
-    }
-    if (evt.type === 'mouseout' || evt.type === 'mouseup') {
-      handleSiblingClass('hovered', shipLength, { x, y }, 'remove');
+    let data: { x: number; y: number; gridRoot: string } | undefined;
+    data = target.classList.contains(`${components.gridItem}`) ? getItemData(target) : undefined;
+    return data;
+  }
+
+  function handleMouse(evt: Event) {
+    let data = validTarget(evt);
+    if (data) {
+      let { x, y } = data;
+      if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
+        return;
+      if (evt.type === 'mouseover') {
+        handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y });
+      }
+      if (evt.type === 'mouseout' || evt.type === 'mouseup') {
+        handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y }, 'remove');
+      }
     }
   }
 
@@ -103,13 +110,6 @@ const BattleshipDOM = (() => {
   function playerClick(data: { x: number; y: number }) {
     clickToPlace(data);
     handleSiblingClass('ship', shipsToPlace[currentShip][1], { x: data.x, y: data.y });
-  }
-
-  function validTarget(evt: Event): { x: number; y: number; gridRoot: string } | undefined {
-    let target = evt.target as HTMLDivElement;
-    let data: { x: number; y: number; gridRoot: string } | undefined;
-    data = target.classList.contains(`${components.gridItem}`) ? getItemData(target) : undefined;
-    return data;
   }
 
   /*TODO: Refactor this function*/

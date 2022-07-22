@@ -3,11 +3,7 @@ import { gameConfig } from '../config/gameConfig';
 
 export type GameboardType = {
   grid: string[][];
-  placeShip(
-    xCoord: number,
-    yCoord: number,
-    shipType: keyof typeof Ships,
-  ): string | undefined;
+  placeShip(xCoord: number, yCoord: number, shipType: keyof typeof Ships): string | undefined;
   receiveAttack(xCoord: number, yCoord: number): string;
   allSunk(): boolean;
   allShipsPlaced(): boolean;
@@ -24,20 +20,12 @@ const Gameboard = (): GameboardType => {
     return grid[xCoord][yCoord] === 'empty';
   }
 
-
-  /*TODO: Refactor*/
   function validCoordinates(x: number, y: number, shipLength: number): boolean {
     let axisToCheck = gameConfig.config.mainAxis === 'y' ? x : y;
     for (let i = 0; i < shipLength && axisToCheck + i <= 9; i++) {
       if (gameConfig.config.mainAxis === 'x') {
-        if (!isCellEmpty(x, y + i)) {
-          return false;
-        }
-      } else {
-        if (!isCellEmpty(x + i, y)) {
-          return false;
-        }
-      }
+        if (!isCellEmpty(x, y + i)) return false;
+      } else if (!isCellEmpty(x + i, y)) return false;
     }
     return axisToCheck + shipLength <= grid.length;
   }
