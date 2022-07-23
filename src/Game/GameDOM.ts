@@ -1,6 +1,6 @@
 import GameMediator from './GameMediator';
 import { createElement } from '../Helpers';
-import { ShipType, Ships } from '../Ship/Ship';
+import { Ships } from '../Ship/Ship';
 import { gameConfig } from '../config/gameConfig';
 import { PlayerType } from '../Player/Player';
 import components from '../styles/components.module.css';
@@ -29,12 +29,8 @@ const GameDOM = (() => {
     gamePhase = phase;
   }
 
-  function setShipStatus(element: HTMLElement, status: string | ShipType) {
-    if (typeof status === 'string') {
-      element.classList.add(`${components[status]}`);
-    } else {
-      element.classList.add(`${components.gridItemBoat}`);
-    }
+  function setStatusClass(element: HTMLElement, status: string) {
+    element.classList.add(`${components[status]}`);
   }
 
   function getItemData(target: HTMLDivElement) {
@@ -70,16 +66,14 @@ const GameDOM = (() => {
 
   function handleMouse(evt: Event) {
     let data = validTarget(evt);
-    if (data) {
-      let { x, y } = data;
-      if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
-        return;
-      if (evt.type === 'mouseover') {
-        handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y });
-      }
-      if (evt.type === 'mouseout' || evt.type === 'mouseup') {
-        handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y }, 'remove');
-      }
+    if (!data) return;
+    let { x, y } = data;
+    if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
+      return;
+    if (evt.type === 'mouseover') {
+      handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y });
+    } else {
+      handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y }, 'remove');
     }
   }
 
@@ -89,13 +83,17 @@ const GameDOM = (() => {
     root!.removeEventListener('mouseup', handleMouse);
   }
 
-  function clickToPlace({ x, y }: { x: number; y: number }) {
+  function nextShip() {
+    currentShip = currentShip > 3 ? 0 : currentShip + 1;
+  }
+
+  function placeShip({ x, y }: { x: number; y: number }) {
     let dataToNotify = { x, y, shipType: shipsToPlace[currentShip][0] };
     mediator.notify(GameDOM, 'placeship', dataToNotify);
   }
 
   function onPlayerPlaceShip({ x, y }: { x: number; y: number }) {
-    clickToPlace({ x, y });
+    placeShip({ x, y });
     handleSiblingClass('ship', shipsToPlace[currentShip][1], { x, y });
   }
 
@@ -103,25 +101,26 @@ const GameDOM = (() => {
     mediator.notify(GameDOM, 'handleturn', { x, y });
   }
 
-  function nextShip() {
-    currentShip = currentShip >= 4 ? 0 : currentShip + 1;
+  function onClickPlace(x: number, y: number, gridRoot: string) {
+    if (gridRoot !== 'c') {
+      if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
+        return;
+      onPlayerPlaceShip({ x, y });
+    } else {
+      placeShip({ x, y });
+    }
+    nextShip();
   }
 
   function handleClick(evt: Event) {
     let data = validTarget(evt);
-    if (data) {
-      let { x, y, gridRoot } = data;
-      if (gamePhase === 'gridConfig' && gridRoot !== 'c') {
-        if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
-          return;
-        onPlayerPlaceShip({ x, y });
-      } else if (gamePhase === 'gridConfig' && gridRoot === 'c') {
-        clickToPlace({ x, y });
-      } else {
-        onClickAttack({ x, y });
-        setShipStatus(evt.target as HTMLDivElement, turnResult);
-      }
-      nextShip();
+    if (!data) return;
+    let { x, y, gridRoot } = data;
+    if (gamePhase === 'gridConfig') {
+      onClickPlace(x, y, gridRoot);
+    } else {
+      onClickAttack({ x, y });
+      setStatusClass(evt.target as HTMLDivElement, turnResult);
     }
   }
 
@@ -163,6 +162,7 @@ const GameDOM = (() => {
   function openStartModal() {
     let axisElement = createElement('div', {}, `Axis: ${gameConfig.config.mainAxis}`);
     let rotateBtn = Button('rotate');
+
     rotateBtn.addEvent('click', () => {
       gameConfig.toggleAxis();
       axisElement.textContent = `Axis: ${gameConfig.config.mainAxis}`;

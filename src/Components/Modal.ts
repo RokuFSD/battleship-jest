@@ -7,7 +7,9 @@ const Modal = () => {
   let outterElement = createElement('div', { class: `${layout.modalOutter}` }, [element]);
 
   function addItem(items: HTMLElement[] | Node[]) {
-    items.forEach((item) => element.appendChild(item));
+    let fragment = new DocumentFragment();
+    items.forEach((item) => fragment.appendChild(item));
+    element.appendChild(fragment);
   }
 
   function getModal(): HTMLElement {
