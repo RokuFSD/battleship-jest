@@ -68,12 +68,15 @@ const GameDOM = (() => {
     let data = validTarget(evt);
     if (!data) return;
     let { x, y } = data;
-    if (!gameConfig.playerOne.getGameboard().validCoordinates(x, y, shipsToPlace[currentShip][1]))
+    if (!gameConfig.playerOne.getGameboard().validCoordinates(x, y, shipsToPlace[currentShip][1])) {
+      handleSiblingClass(`${components.cellInvalid}`, shipsToPlace[currentShip][1], { x, y });
       return;
+    }
     if (evt.type === 'mouseover') {
-      handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y });
+      handleSiblingClass(`${components.cellInvalid}`, shipsToPlace[currentShip][1], { x, y }, 'remove');
+      handleSiblingClass(`${components.cellHover}`, shipsToPlace[currentShip][1], { x, y });
     } else {
-      handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y }, 'remove');
+      handleSiblingClass(`${components.cellHover}`, shipsToPlace[currentShip][1], { x, y }, 'remove');
     }
   }
 
@@ -94,7 +97,7 @@ const GameDOM = (() => {
 
   function onPlayerPlaceShip({ x, y }: { x: number; y: number }) {
     placeShip({ x, y });
-    handleSiblingClass('ship', shipsToPlace[currentShip][1], { x, y });
+    handleSiblingClass(`${components.cellShip}`, shipsToPlace[currentShip][1], { x, y });
   }
 
   function onClickAttack({ x, y }: { x: number; y: number }) {
@@ -160,8 +163,12 @@ const GameDOM = (() => {
   }
 
   function openStartModal() {
-    let axisElement = createElement('div', {}, `Axis: ${gameConfig.config.mainAxis}`);
-    let rotateBtn = Button('rotate');
+    let axisElement = createElement(
+      'div',
+      { class: `${components.modalAxis}` },
+      `Axis: ${gameConfig.config.mainAxis}`,
+    );
+    let rotateBtn = Button('Rotate');
 
     rotateBtn.addEvent('click', () => {
       gameConfig.toggleAxis();
@@ -169,9 +176,11 @@ const GameDOM = (() => {
     });
 
     gameModal.addItem([
-      createElement('h2', {}, 'Place your ships'),
-      axisElement,
+      createElement('h2', {}, [
+        createElement('span', { class: `${components.modalTitle}` }, 'Place your ships'),
+      ]),
       rotateBtn.getButton(),
+      axisElement,
       gridPlayerOne.cloneNode(true),
     ]);
     root?.appendChild(gameModal.getModal());

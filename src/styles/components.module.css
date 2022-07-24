@@ -1,10 +1,17 @@
 .gridContainer,
 .gridContainerPlayer {
-  width: 20rem;
-  height: 20rem;
+  width: 331px;
+  height: 331px;
   display: grid;
   grid-template-columns: repeat(10, 2rem);
   z-index: 1000;
+  background: var(--primary-color);
+  gap: 1px;
+  border: 1px solid var(--primary-color);
+}
+
+.gridContainer:hover {
+  cursor: pointer;
 }
 
 .gridContainerPlayer {
@@ -12,15 +19,24 @@
 }
 
 .gridItem {
-  border: 1px solid #000;
+  background: #eee;
 }
 
 .missed {
   background: coral;
 }
 
-.gridItemBoat {
-  background: #222;
+.cellHover {
+  background: var(--primary-color);
+}
+
+.cellInvalid {
+  cursor: not-allowed;
+}
+
+.cellShip {
+  background: var(--primary-color);
+  animation: glow 0.5s linear;
 }
 
 .hit {
@@ -28,30 +44,125 @@
 }
 
 .missed,
-.hit{
+.hit {
   pointer-events: none;
 }
 
-.shipbox {
-  background-color: blue;
-  width: 31px;
-  height: 31px;
-}
-
-:global(.hovered) {
-  background-color: red;
-}
-
-:global(.ship) {
-  background: #222;
-  pointer-events: none;
-}
-
-.modal{
-  width: 30rem;
-  height: 30rem;
+.modal {
+  width: 35rem;
+  height: 35rem;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  background: #eee;
+}
+
+.modal h2 {
+  font-size: var(--title-size);
+}
+
+.modal h2 span {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  line-height: 1.2;
+}
+
+.modal h2 span::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  animation: a-ltr-after 2s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+  transform: translateX(-101%);
+}
+
+.modal h2 span::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  animation: a-ltr-before 2s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+  transform: translateX(0);
+  background: #eee;
+}
+
+.modal h2 span:nth-of-type(1)::before,
+.modal h2 span:nth-of-type(1)::after {
+  animation-delay: 1s;
+}
+
+.modal h2 span:nth-of-type(2)::before,
+.modal h2 span:nth-of-type(2)::after {
+  animation-delay: 1.5s;
+}
+
+.modal button {
+  display: inline-flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: transparent 0 0 0 3px, rgba(18, 18, 18, 0.1) 0 6px 20px;
+  box-sizing: border-box;
+  color: #121212;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  padding: 0.8rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
+  white-space: nowrap;
+  border: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.modal button:hover {
+  box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
+}
+
+.modalAxis {
+  width: 100%;
+  text-transform: uppercase;
+}
+
+/* ===== keyframes ===== */
+@keyframes glow {
+  0% {
+    background: rgba(98, 213, 137, 0.68);
+  }
+
+  100% {
+    background: var(--primary-color);
+  }
+}
+
+@keyframes a-ltr-after {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(101%);
+  }
+}
+
+@keyframes a-ltr-before {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(200%);
+  }
 }
