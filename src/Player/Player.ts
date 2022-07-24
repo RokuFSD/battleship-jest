@@ -4,19 +4,28 @@ import { movesWithCache } from '../Helpers';
 import { gameConfig } from '../config/gameConfig';
 
 export type PlayerType = {
-  gameboard: GameboardType;
   getName(): string;
   makeAttack(): void;
   autoplace(): void;
+  setGameboard(gameboard: GameboardType): void;
+  getGameboard(): GameboardType;
 };
 
-const Player = (Gameboard: GameboardType, playerName: string = 'cpu') => {
-  let gameboard: GameboardType = Gameboard;
+const Player = (playerName: string = 'cpu') => {
+  let gameboard = {} as GameboardType;
   let name: string = playerName;
   let randomAttacks = movesWithCache();
 
   function getName(): string {
     return name;
+  }
+
+  function setGameboard(Gameboard: GameboardType) {
+    gameboard = Gameboard;
+  }
+
+  function getGameboard(): GameboardType {
+    return gameboard;
   }
 
   function makeAttack() {
@@ -43,7 +52,8 @@ const Player = (Gameboard: GameboardType, playerName: string = 'cpu') => {
   }
 
   return {
-    gameboard,
+    setGameboard,
+    getGameboard,
     getName,
     makeAttack,
     autoplace,

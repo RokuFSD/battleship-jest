@@ -68,7 +68,7 @@ const GameDOM = (() => {
     let data = validTarget(evt);
     if (!data) return;
     let { x, y } = data;
-    if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
+    if (!gameConfig.playerOne.getGameboard().validCoordinates(x, y, shipsToPlace[currentShip][1]))
       return;
     if (evt.type === 'mouseover') {
       handleSiblingClass('hovered', shipsToPlace[currentShip][1], { x, y });
@@ -103,7 +103,7 @@ const GameDOM = (() => {
 
   function onClickPlace(x: number, y: number, gridRoot: string) {
     if (gridRoot !== 'c') {
-      if (!gameConfig.playerOne.gameboard.validCoordinates(x, y, shipsToPlace[currentShip][1]))
+      if (!gameConfig.playerOne.getGameboard().validCoordinates(x, y, shipsToPlace[currentShip][1]))
         return;
       onPlayerPlaceShip({ x, y });
     } else {
@@ -135,8 +135,8 @@ const GameDOM = (() => {
     let gridContainer = document.createElement('div');
     let gridContainerFragment = new DocumentFragment();
     gridContainer.classList.add(`${components.gridContainer}`);
-    for (let i = 0; i < player.gameboard.grid.length; i++) {
-      for (let j = 0; j < player.gameboard.grid[i].length; j++) {
+    for (let i = 0; i < player.getGameboard().grid.length; i++) {
+      for (let j = 0; j < player.getGameboard().grid[i].length; j++) {
         let item = createElement('div', {
           class: `${components.gridItem}`,
           'data-cell': `${player.getName() !== 'cpu' ? 'p' : 'c'}${i}${j}`,
@@ -174,8 +174,26 @@ const GameDOM = (() => {
       rotateBtn.getButton(),
       gridPlayerOne.cloneNode(true),
     ]);
-
     root?.appendChild(gameModal.getModal());
+  }
+
+  function resetGameDom() {
+    currentShip = 0;
+    root!.removeEventListener('click', handleClick);
+    root!.innerHTML = '';
+    mediator.notify(GameDOM, 'restart');
+  }
+
+  function gameOverModal() {
+    let modal = Modal();
+    let winner = createElement('h2', {}, `${gameConfig.playerOne.getName()} wins!`);
+    let restartBtn = Button('Play again');
+    restartBtn.addEvent('click', () => {
+      modal.closeModal();
+      resetGameDom();
+    });
+    modal.addItem([winner, restartBtn.getButton()]);
+    root?.appendChild(modal.getModal());
   }
 
   function closeSetup() {
@@ -192,6 +210,7 @@ const GameDOM = (() => {
     setMediator,
     setGamePhase,
     closeSetup,
+    gameOverModal,
   };
 })();
 

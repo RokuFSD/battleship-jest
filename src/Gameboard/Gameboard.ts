@@ -10,11 +10,14 @@ export type GameboardType = {
   validCoordinates(x: number, y: number, shipLength: number): boolean;
 };
 
+function newGrid() {
+  let grid = new Array(10).fill(null).map(() => Array(10).fill('empty'));
+  return grid;
+}
+
 const Gameboard = (): GameboardType => {
   let ships: ShipType[] = [];
-  let grid = Array(10)
-    .fill(null)
-    .map(() => Array(10).fill('empty'));
+  let grid = newGrid();
 
   function isCellEmpty(xCoord: number, yCoord: number): boolean {
     return grid[xCoord][yCoord] === 'empty';

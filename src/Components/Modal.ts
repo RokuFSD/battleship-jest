@@ -17,6 +17,7 @@ const Modal = () => {
   }
 
   function closeModal() {
+    element.innerHTML = '';
     outterElement.remove();
   }
 

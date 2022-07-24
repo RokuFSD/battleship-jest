@@ -21,12 +21,12 @@ class GameMediator implements Mediator {
     if (sender === this.gameComponent) {
       if (event === 'makeui') {
         this.domComponent
-          .setGrid(sender.playerOne)
+          .setGrid(sender.getPlayerOne())
           .then(() => {
-            this.domComponent.setGrid(sender.playerTwo);
+            this.domComponent.setGrid(sender.getPlayerTwo());
           })
           .then(() => {
-            this.gameComponent.placeShips();
+            this.gameComponent.getPlayerTwo().autoplace();
             this.domComponent.openStartModal();
           });
       }
@@ -41,6 +41,9 @@ class GameMediator implements Mediator {
         this.domComponent.setGamePhase('playing');
         this.domComponent.closeSetup();
       }
+      if (event === 'gameover') {
+        this.domComponent.gameOverModal();
+      }
     }
     if (sender === this.domComponent) {
       if (event === 'handleturn') {
@@ -50,6 +53,11 @@ class GameMediator implements Mediator {
       if (event === 'placeship') {
         let { x, y, shipType } = data;
         this.gameComponent.addShip(+x, +y, shipType);
+      }
+      if (event === 'restart') {
+        this.gameComponent.reset();
+        this.gameComponent.start();
+        this.gameComponent.makeUI();
       }
     }
   }

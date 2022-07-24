@@ -6,12 +6,26 @@ import { gameConfig } from '../config/gameConfig';
 
 const Game = (() => {
   let mediator: GameMediator = {} as GameMediator;
-  let playerOne: PlayerType = Player(Gameboard(), 'player');
-  let playerTwo: PlayerType = Player(Gameboard());
+  let playerOne: PlayerType = Player('player');
+  let playerTwo: PlayerType = Player();
   let currentPlayer = playerOne;
 
   function setMediator(newMediator: GameMediator) {
     mediator = newMediator;
+  }
+
+  function getPlayerOne(): PlayerType {
+    return playerOne;
+  }
+
+  function getPlayerTwo(): PlayerType {
+    return playerTwo;
+  }
+
+  function reset() {
+    playerOne = Player('player');
+    playerTwo = Player();
+    currentPlayer = playerOne;
   }
 
   function makeUI() {
@@ -19,55 +33,54 @@ const Game = (() => {
   }
 
   function start() {
-    mediator.notify(Game, 'start');
+    playerOne.setGameboard(Gameboard());
+    playerTwo.setGameboard(Gameboard());
     gameConfig.setPlayerOne(playerOne);
     gameConfig.setPlayerTwo(playerTwo);
+    mediator.notify(Game, 'start');
   }
 
-  function checkWinner() {
-    return playerOne.gameboard.allSunk() || playerTwo.gameboard.allSunk();
+  function gameOver() {
+    return playerOne.getGameboard().allSunk() || playerTwo.getGameboard().allSunk();
   }
 
   function handleTurn(x: string, y: string) {
+    if (gameOver()) {
+      mediator.notify(Game, 'gameover');
+      return;
+    }
     let moveResult: string = '';
     if (currentPlayer.getName() !== 'cpu') {
       currentPlayer = playerTwo;
-      moveResult = playerTwo.gameboard.receiveAttack(Number(x), Number(y));
+      moveResult = playerTwo.getGameboard().receiveAttack(Number(x), Number(y));
       playerTwo.makeAttack();
     } else {
       currentPlayer = playerOne;
-      moveResult = playerOne.gameboard.receiveAttack(Number(x), Number(y));
-    }
-    if (checkWinner()) {
-      console.log('winner');
+      moveResult = playerOne.getGameboard().receiveAttack(Number(x), Number(y));
     }
     mediator.notify(Game, 'turnPlayed', moveResult);
   }
 
-  function placeShips() {
-    playerTwo.autoplace();
-  }
-
   function addShip(x: number, y: number, shipType: keyof typeof Ships) {
-    if (!playerTwo.gameboard.allShipsPlaced()) {
-      playerTwo.gameboard.placeShip(x, y, shipType);
+    if (!playerTwo.getGameboard().allShipsPlaced()) {
+      playerTwo.getGameboard().placeShip(x, y, shipType);
     } else {
-      playerOne.gameboard.placeShip(x, y, shipType);
+      playerOne.getGameboard().placeShip(x, y, shipType);
     }
-    if (playerOne.gameboard.allShipsPlaced()) {
+    if (playerOne.getGameboard().allShipsPlaced()) {
       mediator.notify(Game, 'startPlaying');
     }
   }
 
   return {
-    playerOne,
-    playerTwo,
+    getPlayerOne,
+    getPlayerTwo,
     start,
     handleTurn,
-    placeShips,
     makeUI,
     setMediator,
     addShip,
+    reset,
   };
 })();
 
