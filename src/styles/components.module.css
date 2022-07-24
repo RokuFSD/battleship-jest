@@ -1,3 +1,11 @@
+.gridSection{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 30rem;
+}
+
 .gridContainer,
 .gridContainerPlayer {
   width: 331px;
@@ -11,7 +19,7 @@
 }
 
 .gridContainer:hover {
-  cursor: pointer;
+  cursor: default;
 }
 
 .gridContainerPlayer {
@@ -20,6 +28,7 @@
 
 .gridItem {
   background: #eee;
+  cursor: crosshair;
 }
 
 .missed {
@@ -49,17 +58,12 @@
 }
 
 .modal {
-  width: 35rem;
-  height: 35rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background: #eee;
+  border-radius: 5px;
 }
 
 .modal h2 {
-  font-size: var(--title-size);
+  font-size: var(--titleApp-size);
 }
 
 .modal h2 span {
@@ -95,7 +99,7 @@
 
 .modal h2 span:nth-of-type(1)::before,
 .modal h2 span:nth-of-type(1)::after {
-  animation-delay: 1s;
+  animation-delay: 0s;
 }
 
 .modal h2 span:nth-of-type(2)::before,
@@ -116,7 +120,7 @@
   line-height: 1;
   margin: 0;
   outline: none;
-  padding: 0.8rem 1rem;
+  padding: 0.4rem 0.6rem;
   text-align: center;
   text-decoration: none;
   transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
@@ -134,6 +138,9 @@
 }
 
 .modalAxis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   text-transform: uppercase;
 }

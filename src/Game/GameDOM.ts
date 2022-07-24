@@ -73,10 +73,20 @@ const GameDOM = (() => {
       return;
     }
     if (evt.type === 'mouseover') {
-      handleSiblingClass(`${components.cellInvalid}`, shipsToPlace[currentShip][1], { x, y }, 'remove');
+      handleSiblingClass(
+        `${components.cellInvalid}`,
+        shipsToPlace[currentShip][1],
+        { x, y },
+        'remove',
+      );
       handleSiblingClass(`${components.cellHover}`, shipsToPlace[currentShip][1], { x, y });
     } else {
-      handleSiblingClass(`${components.cellHover}`, shipsToPlace[currentShip][1], { x, y }, 'remove');
+      handleSiblingClass(
+        `${components.cellHover}`,
+        shipsToPlace[currentShip][1],
+        { x, y },
+        'remove',
+      );
     }
   }
 
@@ -135,9 +145,8 @@ const GameDOM = (() => {
   }
 
   function makeGrid(player: PlayerType): HTMLElement {
-    let gridContainer = document.createElement('div');
+    let gridContainer = createElement('div', { class: `${components.gridContainer}` });
     let gridContainerFragment = new DocumentFragment();
-    gridContainer.classList.add(`${components.gridContainer}`);
     for (let i = 0; i < player.getGameboard().grid.length; i++) {
       for (let j = 0; j < player.getGameboard().grid[i].length; j++) {
         let item = createElement('div', {
@@ -154,10 +163,19 @@ const GameDOM = (() => {
   function setGrid(player: PlayerType): Promise<void> {
     return new Promise((resolve) => {
       let grid = makeGrid(player);
+      let title = createElement(
+        'h2',
+        {},
+        player.getName() !== 'cpu' ? 'Your Waters' : 'Enemy Waters',
+      );
+      let gridSection = createElement('section', { class: `${components.gridSection}` }, [
+        title,
+        grid,
+      ]);
       if (player.getName() !== 'cpu') {
         gridPlayerOne = grid;
       }
-      root?.appendChild(grid);
+      root?.appendChild(gridSection);
       resolve();
     });
   }
