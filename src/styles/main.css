@@ -10,13 +10,14 @@
 }
 
 :root {
+  --bg-color: #fffafa;
   --primary-color: #222;
-
   --title-size: 4rem;
   --titleApp-size: 2.2rem;
 }
 
 body {
+  background: var(--bg-color);
   display: flex;
   position: relative;
   flex-direction: column;

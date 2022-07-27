@@ -41,17 +41,3 @@
   max-width: 9.5rem;
   flex-basis: 100%;
 }
-
-.welcome {
-  background: black;
-  position: absolute;
-  display: flex;
-  flex-flow: row wrap;
-  height: 100vh;
-  color: white;
-  width: 100vw;
-  justify-content: center;
-  text-align: center;
-  gap: 0.5rem;
-  z-index: 1000;
-}

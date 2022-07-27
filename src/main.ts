@@ -1,8 +1,10 @@
 import './styles/main.css';
 import layout from './styles/layout.module.css';
+import loader from './styles/loader.module.css';
 import Game from './Game/Game';
 import GameDOM from './Game/GameDOM';
 import GameMediator from './Game/GameMediator';
+import Animations from './Helpers/Animations';
 import { createElement } from './Helpers';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,7 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function welcomeScreen(): Promise<HTMLElement> {
   return new Promise((resolve) => {
-    let welcome = createElement('div', { class: `${layout.welcome}` }, 'Welcome to Battleship');
+    let welcome = createElement('div', { class: `${loader.loader}` }, [
+      createElement('h1', { class: `${loader.title}` }, 'Battleship'),
+    ]);
     document.body.appendChild(welcome);
     setTimeout(() => {
       resolve(welcome);
@@ -19,27 +23,10 @@ function welcomeScreen(): Promise<HTMLElement> {
   });
 }
 
-/*TODO: Create a new file for animations*/
-
-function closeAnimation(element: HTMLElement) {
-  let opacity = 1;
-  function decrease() {
-    opacity -= 0.05;
-    if (opacity <= 0) {
-      element.style.opacity = '0';
-      element.remove();
-      return;
-    }
-    element.style.opacity = `${opacity}`;
-    requestAnimationFrame(decrease);
-  }
-  decrease();
-}
-
 async function main() {
   const app = document.querySelector<HTMLDivElement>('#app')!;
   const screen = await welcomeScreen();
-  closeAnimation(screen);
+  Animations.closeAnimation(screen);
   app.classList.add(`${layout.app}`);
   new GameMediator(Game, GameDOM);
   Game.start();
