@@ -29,6 +29,7 @@
     "printWidth": 100
   },
   "dependencies": {
+    "debounce-async": "^0.0.2",
     "jest-cli": "^28.1.2",
     "ts-node": "^10.8.2"
   }

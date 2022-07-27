@@ -54,7 +54,7 @@ const Gameboard = (): GameboardType => {
   function receiveAttack(xCoord: number, yCoord: number): string {
     if (grid[xCoord][yCoord] === 'empty') {
       grid[xCoord][yCoord] = 'missed';
-      return 'missed';
+      return 'misses';
     }
     let { ship, place } = grid[xCoord][yCoord];
     ship.hit(place);

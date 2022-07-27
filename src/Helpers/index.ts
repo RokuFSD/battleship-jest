@@ -34,4 +34,11 @@ function movesWithCache() {
   };
 }
 
-export { createElement, movesWithCache };
+function makeUnclickableBy(element: HTMLElement, timer: number) {
+  element.style.pointerEvents = 'none';
+  setTimeout(() => {
+    element.style.pointerEvents = 'auto';
+  }, timer);
+}
+
+export { createElement, movesWithCache, makeUnclickableBy };

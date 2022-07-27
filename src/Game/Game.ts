@@ -26,6 +26,7 @@ const Game = (() => {
     playerOne = Player('player');
     playerTwo = Player();
     currentPlayer = playerOne;
+    gameConfig.currentPlaying = 'Player';
   }
 
   function makeUI() {
@@ -53,10 +54,14 @@ const Game = (() => {
     if (currentPlayer.getName() !== 'cpu') {
       currentPlayer = playerTwo;
       moveResult = playerTwo.getGameboard().receiveAttack(Number(x), Number(y));
-      playerTwo.makeAttack();
+      setTimeout(() => {
+        playerTwo.makeAttack();
+      }, 1500);
+      gameConfig.currentPlaying = 'Player';
     } else {
       currentPlayer = playerOne;
       moveResult = playerOne.getGameboard().receiveAttack(Number(x), Number(y));
+      gameConfig.currentPlaying = 'Cpu';
     }
     mediator.notify(Game, 'turnPlayed', moveResult);
   }

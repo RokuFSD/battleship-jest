@@ -1,4 +1,4 @@
-.gridSection{
+.gridSection {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,8 +31,8 @@
   cursor: crosshair;
 }
 
-.missed {
-  background: coral;
+.misses {
+  background: var(--error-color);
 }
 
 .cellHover {
@@ -49,7 +49,7 @@
 }
 
 .hit {
-  background: springgreen !important;
+  background: var(--success-color);
 }
 
 .missed,

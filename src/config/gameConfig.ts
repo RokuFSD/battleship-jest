@@ -8,6 +8,7 @@ type GameConfig = {
 const gameConfig = {
   playerOne: {} as PlayerType,
   playerTwo: {} as PlayerType,
+  currentPlaying: 'Player',
   config: { mainAxis: 'x', theme: 'light' } as GameConfig,
   setConfig: function (config: GameConfig) {
     this.config = { ...this.config, ...config };

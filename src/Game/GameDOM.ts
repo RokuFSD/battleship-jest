@@ -1,11 +1,11 @@
 import GameMediator from './GameMediator';
-import { createElement } from '../Helpers';
+import { createElement, makeUnclickableBy } from '../Helpers';
 import { Ships } from '../Ship/Ship';
 import { gameConfig } from '../config/gameConfig';
 import { PlayerType } from '../Player/Player';
-import components from '../styles/components.module.css';
 // @ts-ignore
-import { Modal, Button } from '../Components';
+import { Modal, Button, Notifier } from '../Components';
+import components from '../styles/components.module.css';
 
 const GameDOM = (() => {
   let mediator: GameMediator = {} as GameMediator;
@@ -134,6 +134,15 @@ const GameDOM = (() => {
     } else {
       onClickAttack({ x, y });
       setStatusClass(evt.target as HTMLDivElement, turnResult);
+      Notifier.notify(
+        `${gameConfig.currentPlaying} fire a shot and... ${
+          turnResult === 'misses' ? turnResult : "it's a hit!"
+        }!`,
+        turnResult,
+      );
+      if (gameConfig.currentPlaying === 'Player') {
+        makeUnclickableBy(root!, 2500);
+      }
     }
   }
 

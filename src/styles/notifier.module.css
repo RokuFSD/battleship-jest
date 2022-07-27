@@ -1,0 +1,23 @@
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 20%;
+  width: min(500px, 80%);
+  height: 3rem;
+  border-radius: 10px;
+  opacity: 0;
+}
+
+.hit {
+  color: green;
+  background: linear-gradient(145deg, #67e1a2, var(--success-color));
+  box-shadow: 1px 2px 0 var(--success-color), 0 0px 6px #6ceba9;
+}
+
+.misses {
+  color: #b90202;
+  background: linear-gradient(145deg, #fd7070, var(--error-color));
+  box-shadow: 1px 2px 0 var(--error-color), 0 0 6px #fd7070;
+}

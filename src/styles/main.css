@@ -12,6 +12,8 @@
 :root {
   --bg-color: #fffafa;
   --primary-color: #222;
+  --success-color: #56bd88;
+  --error-color: #d45f5f;
   --title-size: 4rem;
   --titleApp-size: 2.2rem;
 }
