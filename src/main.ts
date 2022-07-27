@@ -5,23 +5,45 @@ import GameDOM from './Game/GameDOM';
 import GameMediator from './Game/GameMediator';
 import { createElement } from './Helpers';
 
-function welcomeScreen() {
-  let welcome = createElement('div', { class: `${layout.welcome}` }, 'Welcome to Battleship');
-  document.body.appendChild(welcome);
-  setTimeout(() => {
-    welcome.remove();
-  }, 3000);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('mainsvg')!.style.display = 'block';
 });
 
-const app = document.querySelector<HTMLDivElement>('#app')!;
-app.classList.add(`${layout.app}`);
+function welcomeScreen(): Promise<HTMLElement> {
+  return new Promise((resolve) => {
+    let welcome = createElement('div', { class: `${layout.welcome}` }, 'Welcome to Battleship');
+    document.body.appendChild(welcome);
+    setTimeout(() => {
+      resolve(welcome);
+    }, 3000);
+  });
+}
 
-new GameMediator(Game, GameDOM);
+/*TODO: Create a new file for animations*/
 
-welcomeScreen();
-Game.start();
-Game.makeUI();
+function closeAnimation(element: HTMLElement) {
+  let opacity = 1;
+  function decrease() {
+    opacity -= 0.05;
+    if (opacity <= 0) {
+      element.style.opacity = '0';
+      element.remove();
+      return;
+    }
+    element.style.opacity = `${opacity}`;
+    requestAnimationFrame(decrease);
+  }
+  decrease();
+}
+
+async function main() {
+  const app = document.querySelector<HTMLDivElement>('#app')!;
+  const screen = await welcomeScreen();
+  closeAnimation(screen);
+  app.classList.add(`${layout.app}`);
+  new GameMediator(Game, GameDOM);
+  Game.start();
+  Game.makeUI();
+}
+
+main();
