@@ -24,18 +24,8 @@ body {
   position: relative;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   height: 100vh;
   font-family: 'Poppins', sans-serif;
-}
-
-svg {
-  top: 10%;
-  left: 50%;
-  transform: translate(-50%, -10%);
-  font-size: var(--title-size);
-  position: absolute;
-  width: 600px;
 }
 
 .footer {
@@ -48,4 +38,14 @@ svg {
   justify-content: center;
   box-shadow: 0 -0.8px 0.8px rgba(0, 0, 0, 0.04), 0 -2.3px 2px rgba(0, 0, 0, 0.03);
   font-family: 'Inter', sans-serif;
+}
+
+@media (min-width: 320px) and (max-width: 720px) {
+  body {
+    height: 100%;
+  }
+  .footer {
+    margin-top: 1rem;
+    position: relative;
+  }
 }
